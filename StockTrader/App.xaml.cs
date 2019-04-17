@@ -15,6 +15,9 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
+using SQLiteAccessLibrary;
+
+
 namespace StockTrader
 {
     /// <summary>
@@ -30,6 +33,9 @@ namespace StockTrader
         {
             this.InitializeComponent();
             this.Suspending += OnSuspending;
+
+            // initialize the database
+            SQLiteAccess.InitializeDatabases();
         }
 
         /// <summary>

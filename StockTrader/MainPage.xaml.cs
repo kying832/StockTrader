@@ -13,6 +13,8 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
+using SQLiteAccessLibrary;
+
 namespace StockTrader
 {
     public sealed partial class MainPage : Page
@@ -21,9 +23,41 @@ namespace StockTrader
         {
             this.InitializeComponent();
 
-            // Navigate to the Create Strategy page when the app loads --> THIS COULD BE THE LAST PAGE THE USER WAS ON IF WE SAVE INFO IN SQLITE
-            PageFrame.Navigate(typeof(CreateStrategyPage));
-            TitleTextBlock.Text = "Create Strategy";
+            // navigate to the last viewed page
+            NavigateToLastViewedPage();
+        }
+
+        private void NavigateToLastViewedPage()
+        {
+            string pageName;
+
+            // if this is the first time ever running the application, navigate to the create strategy page
+            if((pageName = SQLiteAccess.GetLastPageVisited()) == null)
+            {
+                PageFrame.Navigate(typeof(CreateStrategyPage));
+                TitleTextBlock.Text = "Create Strategy";
+            }
+
+            // this is not the first time running the app, so navigate to the last viewed page
+            switch(pageName)
+            {
+                case "create":
+                    PageFrame.Navigate(typeof(CreateStrategyPage));
+                    TitleTextBlock.Text = "Create Strategy";
+                    break;
+                case "test":
+                    PageFrame.Navigate(typeof(TestStrategyPage));
+                    TitleTextBlock.Text = "Test Strategy";
+                    break;
+                case "run":
+                    PageFrame.Navigate(typeof(RunStrategyPage));
+                    TitleTextBlock.Text = "Run Strategy";
+                    break;
+                default:
+                    PageFrame.Navigate(typeof(CreateStrategyPage));
+                    TitleTextBlock.Text = "Create Strategy";
+                    break;
+            }
         }
 
         /* **************************************************************************
@@ -48,6 +82,7 @@ namespace StockTrader
                 {
                     PageFrame.Navigate(typeof(CreateStrategyPage));
                     TitleTextBlock.Text = "Create Strategy";
+                    SQLiteAccess.SetLastViewedPage("create");
                     MenuSplitView.IsPaneOpen = false;
                 }
             }
@@ -57,6 +92,7 @@ namespace StockTrader
                 {
                     PageFrame.Navigate(typeof(TestStrategyPage));
                     TitleTextBlock.Text = "Test Strategy";
+                    SQLiteAccess.SetLastViewedPage("test");
                     MenuSplitView.IsPaneOpen = false;
                 }
             }
@@ -66,6 +102,7 @@ namespace StockTrader
                 {
                     PageFrame.Navigate(typeof(RunStrategyPage));
                     TitleTextBlock.Text = "Run Strategy";
+                    SQLiteAccess.SetLastViewedPage("run");
                     MenuSplitView.IsPaneOpen = false;
                 }
             }           
