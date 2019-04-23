@@ -12,7 +12,7 @@ namespace SQLiteAccessLibrary
         public static void InitializeDatabases()
         {
             // create the table to track which page the user last visited
-            using (SqliteConnection db = new SqliteConnection("Filename=lastPageViewed.db"))
+            using (SqliteConnection db = new SqliteConnection("Filename=data.db"))
             {
                 db.Open();
 
@@ -20,11 +20,51 @@ namespace SQLiteAccessLibrary
                     "CREATE TABLE IF NOT EXISTS LastPageViewed (" +
                     "rowNumber INT," +
                     "pageName VARCHAR(8) PRIMARY KEY)";
+                /*  This query string builds the user, stock and portfolio data tables.
+                String buildDB = "CREATE TABLE IF NOT EXISTS account(accnt_num INT PRIMARY KEY AUTO_INCREMENT, name VARCHAR(255), email VARCHAR(255), UNIQUE(name), UNIQUE(email)); " +
+                    "CREATE TABLE IF NOT EXISTS stock(stock_id INT PRIMARY KEY AUTO_INCREMENT, stock_name VARCHAR(255),  stock_price FLOAT, stock_rating INT); " +
+                    "CREATE TABLE IF NOT EXISTS portfolio(user_accnt INT, stock_num INT, FOREIGN KEY (user_accnt) REFERENCES account(accnt_num), FOREIGN KEY (stock_num) REFERENCES stock(stock_id) );";
+                */
+
+
 
                 SqliteCommand createTable = new SqliteCommand(tableCommand, db);
 
                 createTable.ExecuteReader();
             }            
+        }
+
+        /**
+         *   This method will add a new user to the DB
+         */
+        public static void AddUser(String user, String email)
+        {
+            //connect to DB in using block
+            using (SqliteConnection db = new SqliteConnection("Filename=data.db"))
+            {
+                db.Open();
+
+                String cmd = "INSERT INTO account VALUES (@name, @email);";
+                SqliteCommand command = new SqliteCommand(cmd);
+                command.Parameters.AddWithValue("@name", user);
+                command.Parameters.AddWithValue("@email", email);
+
+                command.ExecuteReader();
+
+                db.Close();
+            }
+        }
+        public static void AddStock(String name, float price, int rating)
+        {
+
+        }
+        public static void AddStockToPortfolio()
+        {
+
+        }
+
+        public static void AddPortfolioToUser()
+        {
         }
 
         /* **********************************************************************************************
