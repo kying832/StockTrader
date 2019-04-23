@@ -26,5 +26,43 @@ namespace StockTrader
         {
             this.InitializeComponent();
         }
+
+        private void StrategySelectionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            // Make each page invisible to start
+            BucketStrategyGrid.Visibility = Visibility.Collapsed;
+            MachineLearningStrategy1Grid.Visibility = Visibility.Collapsed;
+            MachineLearningStrategy2Grid.Visibility = Visibility.Collapsed;
+
+            // Now only show the one corresponding the to selected choice
+            if (StrategySelectionBucketStrategy.IsSelected)
+                BucketStrategyGrid.Visibility = Visibility.Visible;
+            else if (StrategySelectionMLStrategy1.IsSelected)
+                MachineLearningStrategy1Grid.Visibility = Visibility.Visible;
+            else if (StrategySelectionMLStrategy2.IsSelected)
+                MachineLearningStrategy2Grid.Visibility = Visibility.Visible;
+            else        
+                BucketStrategyGrid.Visibility = Visibility.Visible;             // simply default to this page
+        }
+
+        private void BucketStrategyTimeFrameComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+
+        private void BucketStrategyNormalizationFunctionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+
+        private void BucketStrategyFutureReturnComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+
+        private void AddTickerBucketStrategyButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

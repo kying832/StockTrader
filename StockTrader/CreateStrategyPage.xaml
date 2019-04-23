@@ -8,7 +8,96 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid>
-        <TextBlock Margin="100" HorizontalAlignment="Center" FontSize="24" Text="This is the Create Strategy page." />
+    <Grid Background="White">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        
+        <ComboBox Name="StrategySelectionComboBox" PlaceholderText="Select Strategy" Margin="50,50,0,0" Width="200" SelectionChanged="StrategySelectionComboBox_SelectionChanged">
+            <ComboBoxItem Name="StrategySelectionBucketStrategy" Content="Bucket Strategy" />
+            <ComboBoxItem Name="StrategySelectionMLStrategy1" Content="Machine Learning Strategy #1" />
+            <ComboBoxItem Name="StrategySelectionMLStrategy2" Content="Machine Learning Strategy #2" />
+        </ComboBox>
+
+        <Grid Grid.Row="1">
+            <Grid Name="BucketStrategyGrid" Visibility="Visible">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="46" />
+                    <RowDefinition Height="60" />
+                    <RowDefinition Height="60" />
+                    <RowDefinition Height="60" />
+                    <RowDefinition Height="60" />
+                    <RowDefinition Height="60" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <TextBlock FontSize="36" FontWeight="Bold" Margin="50,10,0,10" Text="Bucket Strategy Design Parameters" Foreground="Black"/>
+                <StackPanel Grid.Row="1" Orientation="Horizontal">
+                    <TextBlock Text="Name This Strategy:" Foreground="Black" Margin="55,10,117,0"/>
+                    <TextBox Name="BucketStrategyNameTextBox" Height="30" Width="200" Margin="0,5,0,0" VerticalAlignment="Top"/>
+                </StackPanel>
+                <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="50,15,0,0">
+                    <TextBlock Foreground="Black" Text="Add Ticker:" Margin="10,5,153,0" />
+                    <AutoSuggestBox Width="200" Margin="15,0,0,0" Height="30"/>
+                    <Button Name="AddTickerBucketStrategyButton" Content="Add" Foreground="White" Background="Black" VerticalAlignment="Top" Height="30" Margin="25,0,10,0" Width="75" Click="AddTickerBucketStrategyButton_Click"/>
+                    <RelativePanel Height="30" VerticalAlignment="Top">
+                        <TextBlock FontFamily="Segoe MDL2 Assets" Foreground="Red" FontSize="28" Text="&#xF136;"/>
+                        <TextBlock FontFamily="Segoe MDL2 Assets" Foreground="Black" FontSize="28" Text="&#xF142;"/>
+                    </RelativePanel>
+                </StackPanel>
+                <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="50,10,0,0">
+                    <TextBlock Foreground="Black" Text="How much data to gather?" Margin="10,5,73,0" />
+                    <ComboBox Name="BucketStrategyTimeFrameComboBox" Width="200" SelectionChanged="BucketStrategyTimeFrameComboBox_SelectionChanged">
+                        <ComboBoxItem Name="BucketStrategyTimeFrame1Day" Content="1 Day" />
+                        <ComboBoxItem Name="BucketStrategyTimeFrame3Days" Content="3 Days" />
+                        <ComboBoxItem Name="BucketStrategyTimeFrame5Days" Content="5 Days" />
+                        <ComboBoxItem Name="BucketStrategyTimeFrame10Days" Content="10 Days" />
+                        <ComboBoxItem Name="BucketStrategyTimeFrame1Month" Content="1 Month" />
+                        <ComboBoxItem Name="BucketStrategyTimeFrame3Months" Content="3 Months" />
+                        <ComboBoxItem Name="BucketStrategyTimeFrame6Months" Content="6 Months" />
+                        <ComboBoxItem Name="BucketStrategyTimeFrame1Year" Content="1 Year" />
+                        <ComboBoxItem Name="BucketStrategyTimeFrame3Years" Content="3 Years" />
+                        <ComboBoxItem Name="BucketStrategyTimeFrame5Years" Content="5 Years" />
+                    </ComboBox>
+                </StackPanel>
+                <StackPanel Grid.Row="4" Orientation="Horizontal" Margin="50,10,0,0">
+                    <TextBlock Foreground="Black" Text="When to predict future returns?" Margin="10,5,45,0" />
+                    <ComboBox Name="BucketStrategyFutureReturnComboBox" Width="200" SelectionChanged="BucketStrategyFutureReturnComboBox_SelectionChanged">
+                        <ComboBoxItem Name="BucketStrategyFutureReturn1Day" Content="1 Day" />
+                        <ComboBoxItem Name="BucketStrategyFutureReturn3Days" Content="3 Days" />
+                        <ComboBoxItem Name="BucketStrategyFutureReturn5Days" Content="5 Days" />
+                        <ComboBoxItem Name="BucketStrategyFutureReturn10Days" Content="10 Days" />
+                        <ComboBoxItem Name="BucketStrategyFutureReturn1Month" Content="1 Month" />
+                        <ComboBoxItem Name="BucketStrategyFutureReturn3Months" Content="3 Months" />
+                        <ComboBoxItem Name="BucketStrategyFutureReturn6Months" Content="6 Months" />
+                        <ComboBoxItem Name="BucketStrategyFutureReturn1Year" Content="1 Year" />
+                    </ComboBox>
+                </StackPanel>
+                <StackPanel Grid.Row="5" Orientation="Horizontal" Margin="50,10,0,0">
+                    <TextBlock Foreground="Black" Text="Which normalization function to use?" Margin="10,5,10,0" />
+                    <ComboBox Name="BucketStrategyNormalizationFunctionComboBox" Width="200" SelectionChanged="BucketStrategyNormalizationFunctionComboBox_SelectionChanged">
+                        <ComboBoxItem Name="BucketStrategyNormalizationFunctionDivideByMax" Content="Divide By Max" />
+                        <ComboBoxItem Name="BucketStrategyNormalizationFunctionSlopes" Content="Slopes" />
+                    </ComboBox>
+                </StackPanel>
+                <StackPanel Grid.Row="6" Orientation="Horizontal" Margin="50,10,0,0">
+                    <TextBlock Foreground="Black" Text="Similarity Threshold? (0.50 - 1.0)" Margin="10,5,44,0" />
+                    <TextBox Name="BucketStrategySimilarityThresholdTextBox" Height="30" Width="200" VerticalAlignment="Top" Margin="0,5,0,0" />
+                </StackPanel>
+                
+            </Grid>
+
+            <Grid Name="MachineLearningStrategy1Grid" Visibility="Collapsed">
+                <TextBlock FontSize="36" FontWeight="Bold" Margin="50,10,0,10" Text="Machine Learning Strategy #1 Design Parameters" Foreground="Black"/>
+
+            </Grid>
+
+            <Grid Name="MachineLearningStrategy2Grid" Visibility="Collapsed">
+                <TextBlock FontSize="36" FontWeight="Bold" Margin="50,10,0,10" Text="Machine Learning Strategy #2 Design Parameters" Foreground="Black"/>
+
+            </Grid>
+        </Grid>
     </Grid>
 </Page>
