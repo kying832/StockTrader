@@ -5,9 +5,9 @@ VisualStudioVersion = 15.0.28307.329
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StockTrader", "StockTrader\StockTrader.csproj", "{AE4C9501-5C09-414C-A291-DCABD79A04C0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SQLiteLibrary", "SQLiteLibrary\SQLiteLibrary.csproj", "{85E29CC8-DC48-4C75-87A3-44208A6FD8F4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SQLiteLibrary", "SQLiteLibrary\SQLiteLibrary.csproj", "{85E29CC8-DC48-4C75-87A3-44208A6FD8F4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IEXDataLibrary", "IEXDataLibrary\IEXDataLibrary.csproj", "{0B16B78E-DECA-4AA6-8EE6-50C4B47385DC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IEXDataLibrary", "IEXDataLibrary\IEXDataLibrary.csproj", "{0B16B78E-DECA-4AA6-8EE6-50C4B47385DC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

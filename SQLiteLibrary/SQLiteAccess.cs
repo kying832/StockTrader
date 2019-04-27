@@ -11,26 +11,32 @@ namespace SQLiteAccessLibrary
          * **********************************************************************************************/
         public static void InitializeDatabases()
         {
-            // create the table to track which page the user last visited
             using (SqliteConnection db = new SqliteConnection("Filename=data.db"))
             {
                 db.Open();
 
-                String tableCommand =
-                    "CREATE TABLE IF NOT EXISTS LastPageViewed (" +
-                    "rowNumber INT," +
-                    "pageName VARCHAR(8) PRIMARY KEY)";
-                /*  This query string builds the user, stock and portfolio data tables.
-                String buildDB = "CREATE TABLE IF NOT EXISTS account(accnt_num INT PRIMARY KEY AUTO_INCREMENT, name VARCHAR(255), email VARCHAR(255), UNIQUE(name), UNIQUE(email)); " +
-                    "CREATE TABLE IF NOT EXISTS stock(stock_id INT PRIMARY KEY AUTO_INCREMENT, stock_name VARCHAR(255),  stock_price FLOAT, stock_rating INT); " +
-                    "CREATE TABLE IF NOT EXISTS portfolio(user_accnt INT, stock_num INT, FOREIGN KEY (user_accnt) REFERENCES account(accnt_num), FOREIGN KEY (stock_num) REFERENCES stock(stock_id) );";
-                */
+
+                // This query string builds the user, stock and portfolio data tables.
+                String buildDB = "CREATE TABLE IF NOT EXISTS account(accnt_num INT PRIMARY KEY AUTO_INCREMENT, name VARCHAR(255), email VARCHAR(255), UNIQUE(name), UNIQUE(email)); ";
+
+                String buildDB2 = "CREATE TABLE IF NOT EXISTS stock(stock_id INT PRIMARY KEY AUTO_INCREMENT, stock_name VARCHAR(255),  stock_price FLOAT, stock_rating INT); ";
+
+                String buildDB3 = "CREATE TABLE IF NOT EXISTS portfolio(user_accnt INT, stock_num INT, FOREIGN KEY (user_accnt) REFERENCES account(accnt_num), FOREIGN KEY (stock_num) REFERENCES stock(stock_id) );";
+                
 
 
 
-                SqliteCommand createTable = new SqliteCommand(tableCommand, db);
+                SqliteCommand createTable = new SqliteCommand(buildDB, db);
 
                 createTable.ExecuteReader();
+
+                createTable.CommandText = buildDB2;
+                createTable.ExecuteReader();
+
+                createTable.CommandText = buildDB3;
+                createTable.ExecuteReader();
+
+                db.Close();
             }            
         }
 
@@ -44,10 +50,10 @@ namespace SQLiteAccessLibrary
             {
                 db.Open();
 
-                String cmd = "INSERT INTO account VALUES (@name, @email);";
+                String cmd = "INSERT INTO account (name, Email) VALUES (?, ?);";
                 SqliteCommand command = new SqliteCommand(cmd);
-                command.Parameters.AddWithValue("@name", user);
-                command.Parameters.AddWithValue("@email", email);
+                command.Parameters.AddWithValue("name", user);
+                command.Parameters.AddWithValue("email", email);
 
                 command.ExecuteReader();
 
@@ -56,11 +62,37 @@ namespace SQLiteAccessLibrary
         }
         public static void AddStock(String name, float price, int rating)
         {
+            using (SqliteConnection db = new SqliteConnection("Filename=data.db"))
+            {
+                db.Open();
 
+                String cmd = "INSERT INTO stock (stock_name, stock_price, stock_rating) VALUES (?,?,?);";
+                SqliteCommand command = new SqliteCommand(cmd);
+                command.Parameters.AddWithValue("stock_name", name);
+                command.Parameters.AddWithValue("stock_price", price);
+                command.Parameters.AddWithValue("stock_rating", -1);
+
+                command.ExecuteReader();
+                db.Close();
+            }
         }
-        public static void AddStockToPortfolio()
+        //TODO WRITE SELECT QUERY FOR FOREIGN KEY INSERTION
+        public static void AddStockToPortfolioByNames(String stock_name, String user_name)
         {
+            using (SqliteConnection db = new SqliteConnection("Filename = data.db"))
+            {
+                db.Open();
+                String cmd = "INSERT INTO portfolio VALUES (user_accnt, stock_num) VALUES" +
+                    "('user_accnt', SELECT accnt_num from account WHERE name = ?)" +
+                    "('stock_num', SELECT stock_id from stock WHERE stock_name = ?) ;" ;
 
+                SqliteCommand command = new SqliteCommand(cmd);
+                command.Parameters.AddWithValue("name",user_name);
+                command.Parameters.AddWithValue("stock_name", stock_name);
+
+                command.ExecuteReader();
+                db.Close();
+            }
         }
 
         public static void AddPortfolioToUser()
