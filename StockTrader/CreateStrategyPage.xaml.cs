@@ -55,7 +55,6 @@ namespace StockTrader
             tickerSuggestions = await TickerAutoSuggestionEntryManager.GetTickerAutoSuggestionEntriesList();
         }
 
-
         private void StrategySelectionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             // Make each page invisible to start
@@ -72,26 +71,6 @@ namespace StockTrader
                 MachineLearningStrategy2Grid.Visibility = Visibility.Visible;
             else        
                 BucketStrategyGrid.Visibility = Visibility.Visible;             // simply default to this page
-        }
-
-        private void BucketStrategyTimeFrameComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
-        }
-
-        private void BucketStrategyNormalizationFunctionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
-        }
-
-        private void BucketStrategyFutureReturnComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
-        }
-
-        private void AddTickerBucketStrategyButton_Click(object sender, RoutedEventArgs e)
-        {
-
         }
 
         private void AddedStockListRemoveButton_Click(object sender, RoutedEventArgs e)
@@ -161,6 +140,52 @@ namespace StockTrader
 
                 if(!found)
                     addedStockList.Add(new AddedStock(AddTickerAutoSuggestBox.Text.ToUpper()));
+            }
+        }
+
+        private void RunBucketStrategyButton_Click(object sender, RoutedEventArgs e)
+        {
+            List<string> errorMessages = new List<string>();
+
+            // Validate the name of the strategy is not empty and not already used
+            if (BucketStrategyNameTextBox.Text == string.Empty)
+                errorMessages.Add("Error: Strategy name must not be left empty");
+   //         else if (SQLiteAccess.StrategyExists(BucketStrategyNameTextBox.Text))
+   //             errorMessages.Add("Error: Strategy name already exists. Please use a different name.");
+
+            // Verify that at least one valid ticker has been specified
+            if(addedStockList.Count() <= 0)
+                errorMessages.Add("Error: You must select at least one stock to add to the strategy.");
+
+            // Verify that data to gather has been entered
+            if (((ComboBoxItem)BucketStrategyTimeFrameComboBox.SelectedValue) == null)
+                errorMessages.Add("Error: You must select how far back to gather data.");
+
+            // Verify that time frame has been specified
+            if (((ComboBoxItem)BucketStrategyFutureReturnComboBox.SelectedValue) == null)
+                errorMessages.Add("Error: You must select how far into the future to predict the return.");
+
+            // Verify that the normalization function is specified
+            if (((ComboBoxItem)BucketStrategyNormalizationFunctionComboBox.SelectedValue) == null)
+                errorMessages.Add("Error: You must select a normalization function to use.");
+
+            // Verify similarity threshold is specified and in valid range
+
+            if(!float.TryParse(BucketStrategySimilarityThresholdTextBox.Text, out float threshold))
+                errorMessages.Add("Error: The threshold value was not recognized as a valid number.");
+            else if (threshold < 0.5f || threshold > 1.0f)
+                errorMessages.Add("Error: The threshold value must be between 0.5 and 1.0");
+
+            // if error, display error to user
+            if (errorMessages.Count() > 0)
+            {
+                ErrorMessageTextBlock.Text = "";
+                foreach(var entry in errorMessages)
+                    ErrorMessageTextBlock.Text += (entry + '\n');
+            }
+            else // run strategy
+            {
+                ErrorMessageTextBlock.Text = "";
             }
         }
     }

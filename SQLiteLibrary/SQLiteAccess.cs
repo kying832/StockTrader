@@ -15,26 +15,29 @@ namespace SQLiteAccessLibrary
             {
                 db.Open();
 
-
                 // This query string builds the user, stock and portfolio data tables.
-                String buildDB = "CREATE TABLE IF NOT EXISTS account(accnt_num INT PRIMARY KEY AUTO_INCREMENT, name VARCHAR(255), email VARCHAR(255), UNIQUE(name), UNIQUE(email)); ";
-
-                String buildDB2 = "CREATE TABLE IF NOT EXISTS stock(stock_id INT PRIMARY KEY AUTO_INCREMENT, stock_name VARCHAR(255),  stock_price FLOAT, stock_rating INT); ";
-
+                String buildDB  = "CREATE TABLE IF NOT EXISTS account(accnt_num INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(255), email VARCHAR(255), UNIQUE(name), UNIQUE(email)); ";
+                String buildDB2 = "CREATE TABLE IF NOT EXISTS stock(stock_id INTEGER PRIMARY KEY AUTOINCREMENT, stock_name VARCHAR(255),  stock_price FLOAT, stock_rating INT); ";
                 String buildDB3 = "CREATE TABLE IF NOT EXISTS portfolio(user_accnt INT, stock_num INT, FOREIGN KEY (user_accnt) REFERENCES account(accnt_num), FOREIGN KEY (stock_num) REFERENCES stock(stock_id) );";
                 
-
-
-
                 SqliteCommand createTable = new SqliteCommand(buildDB, db);
 
                 createTable.ExecuteReader();
 
-                createTable.CommandText = buildDB2;
+                createTable = new SqliteCommand(buildDB2, db);
+
+                createTable.ExecuteReader();
+
+                createTable = new SqliteCommand(buildDB3, db);
+
+                createTable.ExecuteReader();
+
+   /*           createTable.CommandText = buildDB2;
                 createTable.ExecuteReader();
 
                 createTable.CommandText = buildDB3;
                 createTable.ExecuteReader();
+   */
 
                 db.Close();
             }            
@@ -139,8 +142,10 @@ namespace SQLiteAccessLibrary
             {
                 db.Open();
 
-                SqliteCommand command = new SqliteCommand();
-                command.Connection = db;
+                SqliteCommand command = new SqliteCommand
+                {
+                    Connection = db
+                };
 
                 if (GetLastPageVisited() == null)
                 {
