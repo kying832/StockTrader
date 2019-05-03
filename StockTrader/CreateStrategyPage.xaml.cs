@@ -149,9 +149,11 @@ namespace StockTrader
 
             // Validate the name of the strategy is not empty and not already used
             if (BucketStrategyNameTextBox.Text == string.Empty)
-                errorMessages.Add("Error: Strategy name must not be left empty");
-   //         else if (SQLiteAccess.StrategyExists(BucketStrategyNameTextBox.Text))
-   //             errorMessages.Add("Error: Strategy name already exists. Please use a different name.");
+                errorMessages.Add("Error: Strategy name must not be left empty.");
+            else if(BucketStrategyNameTextBox.Text.Length > 50)
+                errorMessages.Add("Error: Strategy name cannot be more than 50 characters.");
+            else if (SQLiteAccess.StrategyExists(BucketStrategyNameTextBox.Text))
+                errorMessages.Add("Error: Strategy name already exists. Please use a different name.");
 
             // Verify that at least one valid ticker has been specified
             if(addedStockList.Count() <= 0)
@@ -186,7 +188,26 @@ namespace StockTrader
             else // run strategy
             {
                 ErrorMessageTextBlock.Text = "";
+                RunStrategy();
             }
+        }
+
+        private void RunStrategy()
+        {
+            string strategyName          = BucketStrategyNameTextBox.Text;
+            string dataTimeFrame         = (string)((ComboBoxItem)BucketStrategyTimeFrameComboBox.SelectedValue).Content;
+            string futureReturnDate      = (string)((ComboBoxItem)BucketStrategyFutureReturnComboBox.SelectedValue).Content;
+            string normalizationFunction = (string)((ComboBoxItem)BucketStrategyNormalizationFunctionComboBox.SelectedValue).Content;
+            float.TryParse(BucketStrategySimilarityThresholdTextBox.Text, out float similarityThreshold);
+
+            List<string> tickerList = new List<string>();
+            foreach (var ticker in addedStockList)
+                tickerList.Add(ticker.Ticker);
+
+            // can display a loading page
+
+            // can make this multi-threaded
+            MainPage.runningBucketStrategies.Add(new BucketStrategy(strategyName, tickerList, dataTimeFrame, futureReturnDate, normalizationFunction, similarityThreshold));
         }
     }
 }
