@@ -35,6 +35,11 @@ namespace StockTrader
         // data used for Machine Learning Strategy #2
 
 
+        //swing
+        ObservableCollection<AddedStock> SwingaddedStockList;
+
+
+
         public CreateStrategyPage()
         {
             this.InitializeComponent();
@@ -42,11 +47,14 @@ namespace StockTrader
             // data used for bucket strategy
             addedStockList = new ObservableCollection<AddedStock>();
 
-            
+
             // data used for Machine Learning Strategy #1
 
 
             // data used for Machine Learning Strategy #2
+
+            //swing trading
+            SwingaddedStockList = new ObservableCollection<AddedStock>();
 
         }
 
@@ -61,6 +69,7 @@ namespace StockTrader
             BucketStrategyGrid.Visibility = Visibility.Collapsed;
             MachineLearningStrategy1Grid.Visibility = Visibility.Collapsed;
             MachineLearningStrategy2Grid.Visibility = Visibility.Collapsed;
+            SwingStradingStrategyGrid.Visibility = Visibility.Collapsed;
 
             // Now only show the one corresponding the to selected choice
             if (StrategySelectionBucketStrategy.IsSelected)
@@ -69,6 +78,8 @@ namespace StockTrader
                 MachineLearningStrategy1Grid.Visibility = Visibility.Visible;
             else if (StrategySelectionMLStrategy2.IsSelected)
                 MachineLearningStrategy2Grid.Visibility = Visibility.Visible;
+            else if (StrategySwingTradingStrategy.IsSelected)
+                SwingStradingStrategyGrid.Visibility = Visibility.Visible;
             else        
                 BucketStrategyGrid.Visibility = Visibility.Visible;             // simply default to this page
         }
@@ -90,6 +101,26 @@ namespace StockTrader
 
             if (removeAtIndex != -1)
                 addedStockList.RemoveAt(removeAtIndex);
+        }
+
+
+        private void SwingAddedStockListRemoveButton_Click(object sender, RoutedEventArgs e)
+        {
+            UIElementCollection collection = ((Grid)((Button)e.OriginalSource).Parent).Children;
+            string ticker = ((TextBlock)(collection[0])).Text;
+
+            int removeAtIndex = -1;
+            for (int iii = 0; iii < SwingaddedStockList.Count; ++iii)
+            {
+                if (SwingaddedStockList[iii].Ticker == ticker)
+                {
+                    removeAtIndex = iii;
+                    break;
+                }
+            }
+
+            if (removeAtIndex != -1)
+                SwingaddedStockList.RemoveAt(removeAtIndex);
         }
 
         private void AddTickerAutoSuggestBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
@@ -129,7 +160,7 @@ namespace StockTrader
 
         private void AddTickerAutoSuggestBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
         {
-            if (!string.IsNullOrEmpty(AddTickerAutoSuggestBox.Text))
+            if (!string.IsNullOrEmpty(AddTickerAutoSuggestBox.Text)&& (StrategySelectionBucketStrategy.IsSelected))
             {
                 bool found = false;
                 foreach(var entry in addedStockList)
@@ -140,6 +171,21 @@ namespace StockTrader
 
                 if(!found)
                     addedStockList.Add(new AddedStock(AddTickerAutoSuggestBox.Text.ToUpper()));
+            }
+
+
+            //swing
+            if (!string.IsNullOrEmpty(AddTickerAutoSuggestBoxSwing.Text)&& (StrategySwingTradingStrategy.IsSelected))
+            {
+                bool found = false;
+                foreach (var entry in SwingaddedStockList)
+                {
+                    if (entry.Ticker == AddTickerAutoSuggestBoxSwing.Text.ToUpper())
+                        found = true;
+                }
+
+                if (!found)
+                    SwingaddedStockList.Add(new AddedStock(AddTickerAutoSuggestBoxSwing.Text.ToUpper()));
             }
         }
 
@@ -192,7 +238,8 @@ namespace StockTrader
             }
         }
 
-        private void RunStrategy()
+
+            private void RunStrategy()
         {
             string strategyName          = BucketStrategyNameTextBox.Text;
             string dataTimeFrame         = (string)((ComboBoxItem)BucketStrategyTimeFrameComboBox.SelectedValue).Content;
@@ -208,6 +255,75 @@ namespace StockTrader
 
             // can make this multi-threaded
             MainPage.runningBucketStrategies.Add(new BucketStrategy(strategyName, tickerList, dataTimeFrame, futureReturnDate, normalizationFunction, similarityThreshold));
+        }
+
+        //swing
+        private void RunSwingStrategyButton_Click(object sender, RoutedEventArgs e)
+        {
+            List<string> errorMessages = new List<string>();
+
+            // Validate the name of the strategy is not empty and not already used
+            if (SwingStrategyNameTextBox.Text == string.Empty)
+                errorMessages.Add("Error: Strategy name must not be left empty.");
+            else if (SwingStrategyNameTextBox.Text.Length > 50)
+                errorMessages.Add("Error: Strategy name cannot be more than 50 characters.");
+            else if (SQLiteAccess.StrategyExists(SwingStrategyNameTextBox.Text))
+                errorMessages.Add("Error: Strategy name already exists. Please use a different name.");
+
+            // Verify that at least one valid ticker has been specified
+            if (SwingaddedStockList.Count() <= 0)
+                errorMessages.Add("Error: You must select at least one stock to add to the strategy.");
+
+
+            // Verify that data to gather has been entered
+            if (((ComboBoxItem)DaySelectionForSwing.SelectedValue) == null)
+                errorMessages.Add("Error: You must select how many days for the swing.");
+
+            // if error, display error to user
+            if (errorMessages.Count() > 0)
+            {
+                ErrorMessageTextBlockSwing.Text = "";
+                foreach (var entry in errorMessages)
+                    ErrorMessageTextBlockSwing.Text += (entry + '\n');
+            }
+            else // run strategy
+            {
+                ErrorMessageTextBlockSwing.Text = "";
+                RunStrategySwing();
+            }
+
+
+
+        }
+
+        private void RunStrategySwing()
+        {
+            string strategyName = SwingStrategyNameTextBox.Text;
+            string daysToAnalyze = (string)((ComboBoxItem)DaySelectionForSwing.SelectedValue).Content;
+
+            List<string> tickerList = new List<string>();
+            foreach (var ticker in SwingaddedStockList)
+                tickerList.Add(ticker.Ticker);
+
+        }
+
+
+
+
+        private void TextBlock_SelectionChanged(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void DaySelectionForSwingComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+        
+
+        private void BucketStrategyFutureReturnComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
         }
     }
 }
