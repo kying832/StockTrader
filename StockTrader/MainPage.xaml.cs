@@ -41,6 +41,7 @@ namespace StockTrader
             {
                 PageFrame.Navigate(typeof(CreateStrategyPage));
                 TitleTextBlock.Text = "Create Strategy";
+                SQLiteAccess.SetLastViewedPage("create");
             }
 
             // this is not the first time running the app, so navigate to the last viewed page

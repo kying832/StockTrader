@@ -56,6 +56,9 @@ namespace StockTrader
             //swing trading
             SwingaddedStockList = new ObservableCollection<AddedStock>();
 
+            // other initialization features
+            StrategySelectionBucketStrategy.IsSelected = true;
+
         }
 
         private async void CreateStrategyPage_Loaded(object sender, RoutedEventArgs e)

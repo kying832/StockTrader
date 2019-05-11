@@ -35,6 +35,10 @@ namespace SQLiteAccessLibrary
                     "ticker VARCHAR(15), " +
                     "CONSTRAINT pk_strategyTicker PRIMARY KEY(strategyName, ticker))");
 
+                tables.Add("CREATE TABLE IF NOT EXISTS LastPageViewed(" +
+                    "rowNumber INT," +
+                    "pageName VARCHAR(8) PRIMARY KEY)"); 
+
                 SqliteCommand createTableCommand;
 
                 foreach(var table in tables)
@@ -113,7 +117,7 @@ namespace SQLiteAccessLibrary
         {
             string pageName = "";
 
-            using (SqliteConnection db = new SqliteConnection("Filename=lastPageViewed.db"))
+            using (SqliteConnection db = new SqliteConnection("Filename=data.db"))
             {
                 db.Open();
 
@@ -142,7 +146,7 @@ namespace SQLiteAccessLibrary
          * **********************************************************************************************/
         public static void SetLastViewedPage(string pageName)
         {
-            using (SqliteConnection db = new SqliteConnection("Filename=lastPageViewed.db"))
+            using (SqliteConnection db = new SqliteConnection("Filename=data.db"))
             {
                 db.Open();
 
