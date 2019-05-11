@@ -243,6 +243,7 @@ namespace StockTrader
         {
             string strategyName          = BucketStrategyNameTextBox.Text;
             string dataTimeFrame         = (string)((ComboBoxItem)BucketStrategyTimeFrameComboBox.SelectedValue).Content;
+            string slidingWindowSize     = (string)((ComboBoxItem)BucketStrategyWindowSizeComboBox.SelectedValue).Content;
             string futureReturnDate      = (string)((ComboBoxItem)BucketStrategyFutureReturnComboBox.SelectedValue).Content;
             string normalizationFunction = (string)((ComboBoxItem)BucketStrategyNormalizationFunctionComboBox.SelectedValue).Content;
             float.TryParse(BucketStrategySimilarityThresholdTextBox.Text, out float similarityThreshold);
@@ -254,7 +255,7 @@ namespace StockTrader
             // can display a loading page
 
             // can make this multi-threaded
-            MainPage.runningBucketStrategies.Add(new BucketStrategy(strategyName, tickerList, dataTimeFrame, futureReturnDate, normalizationFunction, similarityThreshold));
+            MainPage.runningBucketStrategies.Add(new BucketStrategy(strategyName, tickerList, dataTimeFrame, slidingWindowSize, futureReturnDate, normalizationFunction, similarityThreshold));
         }
 
         //swing
@@ -291,9 +292,6 @@ namespace StockTrader
                 ErrorMessageTextBlockSwing.Text = "";
                 RunStrategySwing();
             }
-
-
-
         }
 
         private void RunStrategySwing()

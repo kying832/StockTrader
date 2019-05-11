@@ -120,6 +120,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="BucketStrategy\AnalysisCategory.cs" />
     <Compile Include="BucketStrategy\BucketStrategy.cs" />
     <Compile Include="CreateStrategyPage.xaml.cs">
       <DependentUpon>CreateStrategyPage.xaml</DependentUpon>
