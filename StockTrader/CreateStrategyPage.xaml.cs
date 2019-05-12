@@ -306,6 +306,9 @@ namespace StockTrader
             foreach (var ticker in SwingaddedStockList)
                 tickerList.Add(ticker.Ticker);
 
+
+            MainPage.runningSwingStrategies.Add(new SwingStrategy(strategyName, tickerList, daysToAnalyze));
+
         }
 
 
