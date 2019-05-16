@@ -309,6 +309,9 @@ namespace StockTrader
 
             MainPage.runningSwingStrategies.Add(new SwingStrategy(strategyName, tickerList, daysToAnalyze));
 
+
+
+
         }
 
 
