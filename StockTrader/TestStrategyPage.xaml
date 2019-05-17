@@ -5,10 +5,99 @@
     xmlns:local="using:StockTrader"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:data="using:StockTrader.Models"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-        <TextBlock Margin="100" HorizontalAlignment="Center" FontSize="24" Text="This is the Test Strategy page." />
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="3*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <Grid Grid.Column="0" >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <Grid  Name="TestStrategyPageHeader">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Strategy: " FontSize="24" Margin="15,10"/>
+                    <TextBlock Name="SelectedStrategyTextBlock" FontSize="24" Margin="5,10"/>
+                    <Button Name="ShowStrategySummaryButton" Content="Show Summary" Margin="30,10,10,10" Click="ShowStrategySummaryButton_Click"/>
+                    <Button Name="ShowTestPageButton" Content="Show Test Page" Margin="10" Click="ShowTestPageButton_Click"/>
+                </StackPanel>
+
+                <Button Name="DeleteStrategy" Content="Delete" HorizontalAlignment="Right" Margin="0,0,15,0" Click="DeleteStrategy_Click"/>
+            </Grid>
+
+            <Border Grid.Row="1" BorderBrush="White" BorderThickness="2,2,0,2">
+                <Grid>
+                    <Grid Name="SummaryGrid">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Column="0" Grid.Row="0" Text="Number of Categories:" Margin="20,10,0,10" FontSize="24" />
+                        <TextBlock Grid.Column="1" Grid.Row="0" Name="NumberOfCategories" Margin="20,10,0,10" FontSize="24" />
+
+                        <TextBlock Grid.Column="0" Grid.Row="1" Text="Largest Category Size:" Margin="20,10,0,10" FontSize="24" />
+                        <TextBlock Grid.Column="1" Grid.Row="1" Name="LargestCategorySize" Margin="20,10,0,10" FontSize="24" />
+
+                        <TextBlock Grid.Column="0" Grid.Row="2" Text="Average Category Size:" Margin="20,10,0,10" FontSize="24" />
+                        <TextBlock Grid.Column="1" Grid.Row="2" Name="AverageCategorySize" Margin="20,10,0,10" FontSize="24" />
+<!--
+                        <TextBlock Grid.Column="0" Grid.Row="3" Text="Number of Similarity Values:" Margin="20,10,0,10" FontSize="24" />
+                        <TextBlock Grid.Column="1" Grid.Row="3" Name="NumberOfSimilarityValues" Margin="20,10,0,10" FontSize="24" />
+
+                        <TextBlock Grid.Column="0" Grid.Row="4" Text="Largest Similarity Value:" Margin="20,10,0,10" FontSize="24" />
+                        <TextBlock Grid.Column="1" Grid.Row="4" Name="LargestSimilarityValue" Margin="20,10,0,10" FontSize="24" />
+
+                        <TextBlock Grid.Column="0" Grid.Row="5" Text="Average Similarity Value:" Margin="20,10,0,10" FontSize="24" />
+                        <TextBlock Grid.Column="1" Grid.Row="5" Name="AverageSimilarityValue" Margin="20,10,0,10" FontSize="24" />
+               -->
+                    </Grid>
+
+                    <Grid Name="TestGrid" Visibility="Collapsed">
+                        <TextBlock Text="This is the test grid" />
+                    </Grid>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            
+            <Border BorderBrush="White" BorderThickness="2,1,2,0">
+                <TextBlock Text="Strategies" Padding="5" FontSize="18" />
+            </Border>
+
+            <Border  Grid.Row="1" BorderBrush="White" BorderThickness="2">
+                <ListView x:Name="StrategiesListView" ItemsSource="{x:Bind bucketStrategyList, Mode=OneWay}" IsItemClickEnabled="True" ItemClick="StrategiesListView_ItemClick">
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="data:BucketStrategyEntry">
+                            <Grid>
+                                <TextBlock Text="{x:Bind BucketStrategyName, Mode=OneWay}" />
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </Border>
+        </Grid>
+        
     </Grid>
 </Page>

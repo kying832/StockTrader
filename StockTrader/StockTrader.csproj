@@ -129,6 +129,7 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Models\AddedStock.cs" />
+    <Compile Include="Models\BucketStrategyEntry.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RunStrategyPage.xaml.cs">
       <DependentUpon>RunStrategyPage.xaml</DependentUpon>

@@ -237,12 +237,11 @@ namespace StockTrader
             else // run strategy
             {
                 ErrorMessageTextBlock.Text = "";
-                RunStrategy();
+                RunBucketStrategy();
             }
         }
 
-
-            private void RunStrategy()
+        private async void RunBucketStrategy()
         {
             string strategyName          = BucketStrategyNameTextBox.Text;
             string dataTimeFrame         = (string)((ComboBoxItem)BucketStrategyTimeFrameComboBox.SelectedValue).Content;
@@ -258,7 +257,10 @@ namespace StockTrader
             // can display a loading page
 
             // can make this multi-threaded
+            ErrorMessageTextBlock.Text = "Running...";
             MainPage.runningBucketStrategies.Add(new BucketStrategy(strategyName, tickerList, dataTimeFrame, slidingWindowSize, futureReturnDate, normalizationFunction, similarityThreshold));
+            await MainPage.runningBucketStrategies[MainPage.runningBucketStrategies.Count() - 1].Run();
+            ErrorMessageTextBlock.Text = "Finished";
         }
 
         //swing
@@ -306,9 +308,7 @@ namespace StockTrader
             foreach (var ticker in SwingaddedStockList)
                 tickerList.Add(ticker.Ticker);
 
-
             MainPage.runningSwingStrategies.Add(new SwingStrategy(strategyName, tickerList, daysToAnalyze));
-
         }
 
 

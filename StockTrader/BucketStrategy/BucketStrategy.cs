@@ -19,7 +19,7 @@ namespace StockTrader
         public string       m_normalizationFunction;
         public float        m_similarityThreshold;
 
-        private List<AnalysisCategory> categories;
+        public List<AnalysisCategory> m_categories;
 
         public delegate void NormalizationFunction(ref List<double> list);
 
@@ -36,14 +36,12 @@ namespace StockTrader
             foreach (var ticker in t)
                 m_tickers.Add(ticker);
 
-            categories = new List<AnalysisCategory>();
+            m_categories = new List<AnalysisCategory>();
 
           //  SQLiteAccess.AddBucketStrategy(m_strategyName, m_tickers, m_dataTimeFrame, m_futureReturnDate, m_normalizationFunction, m_similarityThreshold);
-
-          //  Run();
         }
 
-        private async Task Run()
+        public async Task Run()
         {
             // Gather data
             List<List<double>> allData = new List<List<double>>();
@@ -90,9 +88,9 @@ namespace StockTrader
                     similarityValue = 0.0;
                     mostSimilarValue = 0.0;
 
-                    for (int iii = 0; iii < categories.Count(); ++iii)
+                    for (int iii = 0; iii < m_categories.Count(); ++iii)
                     {
-                        similarityValue = categories[iii].ComputeSimilarity(windowData);
+                        similarityValue = m_categories[iii].ComputeSimilarity(windowData);
 
                         if (similarityValue >= m_similarityThreshold && similarityValue > mostSimilarValue)
                         {
@@ -103,12 +101,12 @@ namespace StockTrader
 
                     if (mostSimilarCategoryIndex != -1)
                     {
-                        categories[mostSimilarCategoryIndex].Add(windowData);
+                        m_categories[mostSimilarCategoryIndex].Add(windowData);
                         mostSimilarCategoryIndex = -1;
                     }
                     else
                     {
-                        categories.Add(new AnalysisCategory(windowData));
+                        m_categories.Add(new AnalysisCategory(windowData));
                     }
 
                     // clear the current window
