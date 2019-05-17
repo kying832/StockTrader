@@ -27,26 +27,110 @@ using IEXDataLibrary;
 
     namespace StockTrader
 {
+
+
+
+
+    public struct StockAverage
+    {
+        public string Ticker;
+        public double Average;
+        public StockAverage(string tick, double ave)
+        {
+            Ticker = tick;
+            Average = ave;
+        }
+    }
     public class SwingStrategy
     {
         //variables to set
         public string s_stratName;
         public List<string> s_tickers;
-        public string s_days; 
-    
+        public int s_days;
 
 
-    public SwingStrategy(string sN, List<string> t, string daysToAnalyze)
+
+        public SwingStrategy(string sN, List<string> t, string daysToAnalyze)
         {
             s_stratName = sN;
             s_tickers = new List<string>();
             foreach (var ticker in t)
                 s_tickers.Add(ticker);
-            s_days = daysToAnalyze;
+            s_days = buttonToDays(daysToAnalyze);
 
 
             SQLiteAccess.AddSwingStrategy(s_stratName, s_tickers, s_days);
+
+            RunSwing();
         }
 
+        //Helper to conver to days
+        //Api only lets you pull months, cant do 7 days for example
+
+
+        int buttonToDays(string inputString)
+        {
+            switch (inputString)
+            {
+                case "10 Days": return 10;
+                case "15 Days": return 15;
+                case "20 Days": return 20;
+                case "25 Days": return 25;
+                case "30 Days": return 30;
+                case "35 Days": return 35;
+                case "40 Days": return 40;
+                default: return 20;
+            }
+        }
+
+        //run swing
+  
+        private async Task RunSwing()
+        {
+            List<List<ThreeMonthData>> allSwingData = new List<List<ThreeMonthData>>();
+
+            foreach (string ticker in s_tickers)
+                allSwingData.Add(await GetStockDataThreeMonth(ticker));
+
+
+            //find average based on high, low, open, close
+            int ticker_count=s_tickers.Count();
+            int numDays = s_days;
+
+            List<StockAverage> averages = new List<StockAverage>();
+
+            for (int i = 0; i< s_tickers.Count(); i++)
+            {
+                double sum = 0;
+                for (int j = 0; j< numDays; j++)
+                {
+                    double tempSum=0;
+                    tempSum += allSwingData[i][j].high;
+                    tempSum += allSwingData[i][j].low;
+                    tempSum += allSwingData[i][j].open;
+                    tempSum += allSwingData[i][j].close;
+                    tempSum /= 4;
+                    sum = tempSum;
+                }
+                sum /= numDays;
+                averages.Add(new StockAverage(s_tickers[i], sum));
+
+            }
+
+            //need to finish this, getting a database double add error
+            //Mike continued here
+            //return Task<averages>;
+        }
+
+
+
+
+        //get the information for each stock
+        async Task<List<ThreeMonthData>> GetStockDataThreeMonth(string ticker)
+        {
+            List<ThreeMonthData> TotalThreeMonthData = await IEXDataAccess.GetThreeMonthData( ticker );
+            return TotalThreeMonthData;
+
+        }
     }
 }
