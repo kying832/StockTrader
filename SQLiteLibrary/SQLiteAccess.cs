@@ -38,7 +38,7 @@ namespace SQLiteAccessLibrary
                 //for swing
                 tables.Add("CREATE TABLE IF NOT EXISTS SwingListStrategy (" +
                    "strategyName VARCHAR(50) PRIMARY KEY, " +
-                   "daysToAnalyze VARCHAR(15))");
+                   "daysToAnalyze INT)");
 
                 tables.Add("CREATE TABLE IF NOT EXISTS SwingListStrategyTickers (" +
                     "strategyName VARCHAR(50), " +
@@ -263,7 +263,7 @@ namespace SQLiteAccessLibrary
         /* **********************************************************************************************
          * Add a strategy to the swing strategy table
          * **********************************************************************************************/
-        public static void AddSwingStrategy(string strategyName, List<string> tickers, string daysToAnalyze)
+        public static void AddSwingStrategy(string strategyName, List<string> tickers, int daysToAnalyze)
         {
             using (SqliteConnection db = new SqliteConnection("Filename=data.db"))
             {

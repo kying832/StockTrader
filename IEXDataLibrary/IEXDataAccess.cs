@@ -59,6 +59,25 @@ namespace IEXDataLibrary
 
             return (List<TickerSuggestions>)serializer.ReadObject(ms);
         }
+
+        //get 3 months trading, for swing strat
+
+        public async static Task<List<ThreeMonthData>> GetThreeMonthData(string ticker)
+        {
+            var http = new HttpClient();
+            string URI = String.Format("https://api.iextrading.com/1.0/stock/{0}/chart/3m", ticker);
+            var response = await http.GetAsync(URI);
+            var result = await response.Content.ReadAsStringAsync();
+
+            // remove all instances of null
+            result = result.Replace("null", "0.0");
+
+            var serializer = new DataContractJsonSerializer(typeof(List<ThreeMonthData>));
+
+            var ms = new MemoryStream(Encoding.UTF8.GetBytes(result));
+
+            return (List<ThreeMonthData>)serializer.ReadObject(ms);
+        }
     }
 
 
@@ -189,4 +208,47 @@ namespace IEXDataLibrary
         [DataMember]
         public object iexId { get; set; }
     }
+
+    [DataContract]
+    public class ThreeMonthData
+    {
+        [DataMember]
+        public string date { get; set; }
+
+        [DataMember]
+        public double open { get; set; }
+
+        [DataMember]
+        public double high { get; set; }
+
+        [DataMember]
+        public double low { get; set; }
+
+        [DataMember]
+        public double close { get; set; }
+
+        [DataMember]
+        public int volume { get; set; }
+
+        [DataMember]
+        public int unadjustedVolume { get; set; }
+
+        [DataMember]
+        public double change { get; set; }
+
+        [DataMember]
+        public double changePercent { get; set; }
+
+        [DataMember]
+        public double vwap { get; set; }
+
+        [DataMember]
+        public string label { get; set; }
+
+        [DataMember]
+        public double changeOverTime { get; set; }
+
+    }
+
+
 }
