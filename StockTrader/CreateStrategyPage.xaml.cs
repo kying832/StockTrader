@@ -192,6 +192,8 @@ namespace StockTrader
             }
         }
 
+
+
         private void RunBucketStrategyButton_Click(object sender, RoutedEventArgs e)
         {
             List<string> errorMessages = new List<string>();
