@@ -301,7 +301,7 @@ namespace StockTrader
             }
         }
 
-        private void RunStrategySwing()
+        private async void RunStrategySwing()
         {
             string strategyName = SwingStrategyNameTextBox.Text;
             string daysToAnalyze = (string)((ComboBoxItem)DaySelectionForSwing.SelectedValue).Content;
@@ -310,7 +310,13 @@ namespace StockTrader
             foreach (var ticker in SwingaddedStockList)
                 tickerList.Add(ticker.Ticker);
 
+            ErrorMessageTextBlockSwing.Text = "Running...";
             MainPage.runningSwingStrategies.Add(new SwingStrategy(strategyName, tickerList, daysToAnalyze));
+            await MainPage.runningSwingStrategies[MainPage.runningSwingStrategies.Count() - 1].RunSwing();
+            ErrorMessageTextBlockSwing.Text = "Finished";
+
+
+
         }
 
 

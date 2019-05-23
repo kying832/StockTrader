@@ -35,12 +35,20 @@ using IEXDataLibrary;
     {
         public string Ticker;
         public double Average;
-        public StockAverage(string tick, double ave)
+        public double MovingAverage;
+        public int buy;
+        //1 yes buy, 0 no buy.
+        public StockAverage(string Ticker, double Average, double MovingAverage, int buy)
         {
-            Ticker = tick;
-            Average = ave;
+            this.Ticker = Ticker;
+            this.Average = Average;
+            this.MovingAverage = MovingAverage;
+            this.buy = buy;
         }
     }
+
+ 
+
     public class SwingStrategy
     {
         //variables to set
@@ -59,9 +67,9 @@ using IEXDataLibrary;
             s_days = buttonToDays(daysToAnalyze);
 
 
-            SQLiteAccess.AddSwingStrategy(s_stratName, s_tickers, s_days);
+            //SQLiteAccess.AddSwingStrategy(s_stratName, s_tickers, s_days);
 
-            RunSwing();
+            //RunSwing();
         }
 
         //Helper to conver to days
@@ -85,7 +93,7 @@ using IEXDataLibrary;
 
         //run swing
   
-        private async Task RunSwing()
+        public async Task RunSwing()
         {
             List<List<ThreeMonthData>> allSwingData = new List<List<ThreeMonthData>>();
 
@@ -110,16 +118,47 @@ using IEXDataLibrary;
                     tempSum += allSwingData[i][j].open;
                     tempSum += allSwingData[i][j].close;
                     tempSum /= 4;
-                    sum = tempSum;
+                    sum += tempSum;
                 }
-                sum /= numDays;
-                averages.Add(new StockAverage(s_tickers[i], sum));
 
+                //calculate 5 day moving average
+                double movingaverage = 0;
+                for (int k = 0; k < 5; k++)
+                {
+                    double tempSum = 0;
+                    tempSum += allSwingData[i][k].high;
+                    tempSum += allSwingData[i][k].low;
+                    tempSum += allSwingData[i][k].open;
+                    tempSum += allSwingData[i][k].close;
+                    tempSum /= 4;
+                    movingaverage += tempSum;
+                }
+
+                //average of total month
+                sum /= numDays;
+                //normalize to 5 days
+                movingaverage /= 5;
+
+                int goodBuy = 0;
+
+
+                //now average and moving average have been compared
+                //now evaluate swing
+                //Compare averages, if 5 day moving average is < 20 day ,that is a buy
+                if (movingaverage * .85 > sum)
+                { goodBuy = 1; }
+                else if (movingaverage * .85 < sum)
+                { goodBuy = 0; }
+
+                    averages.Add(new StockAverage(s_tickers[i], sum, movingaverage, goodBuy));
             }
 
-            //need to finish this, getting a database double add error
-            //Mike continued here
-            //return Task<averages>;
+
+
+
+
+
+
         }
 
 

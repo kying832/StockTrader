@@ -38,6 +38,7 @@ namespace StockTrader
             this.InitializeComponent();
 
             addedStockList = new ObservableCollection<AddedStock>();
+            //we need away to differentiat between swing/bucket machine 1 and 2
 
             bucketStrategyList = new ObservableCollection<BucketStrategyEntry>();
             InitializeBucketStrategyList();       
