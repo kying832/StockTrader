@@ -29,7 +29,7 @@ namespace StockTrader
 
     public sealed partial class TestStrategyPage : Page
     {
-        ObservableCollection<BucketStrategyEntry> bucketStrategyList;
+        ObservableCollection<StrategyEntry> strategyList;
         ObservableCollection<AddedStock> addedStockList;
         List<TickerAutoSuggestionEntry> tickerSuggestions;
 
@@ -41,10 +41,10 @@ namespace StockTrader
 
             addedStockList = new ObservableCollection<AddedStock>();
 
-            bucketStrategyList = new ObservableCollection<BucketStrategyEntry>();
-            InitializeBucketStrategyList();       
+            strategyList = new ObservableCollection<StrategyEntry>();
+            InitializeStrategyList();       
 
-            if (bucketStrategyList.Count == 0)
+            if (strategyList.Count == 0)
             {
                 TestStrategyPageHeader.Visibility = Visibility.Collapsed;
                 TestGrid.Visibility = Visibility.Collapsed;
@@ -53,30 +53,31 @@ namespace StockTrader
             else
             {
                 TestStrategyPageHeader.Visibility = Visibility.Visible;
-                LoadStrategy(bucketStrategyList[0]);
+                LoadStrategy(strategyList[0]);
             }
         }
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            CategoryNumberTextBox.PlaceholderText = "1 - " + NumberOfCategories.Text;
-
             tickerSuggestions = await TickerAutoSuggestionEntryManager.GetTickerAutoSuggestionEntriesList();
         }
 
-        private void InitializeBucketStrategyList()
+        private void InitializeStrategyList()
         {
-            // add each strategy name to the list
+            // add each bucket strategy name to the list
             foreach (var entry in MainPage.runningBucketStrategies)
-                bucketStrategyList.Add(new BucketStrategyEntry(entry.m_strategyName));
+                strategyList.Add(new BucketStrategyEntry(entry.m_strategyName));
+
+            // also add swing strategies
+
         }
 
         private void StrategiesListView_ItemClick(object sender, ItemClickEventArgs e)
         {
-            LoadStrategy((BucketStrategyEntry)e.ClickedItem);            
+            LoadStrategy((StrategyEntry)e.ClickedItem);            
         }
 
-        private void LoadStrategy(BucketStrategyEntry strategyEntry)
+        private void LoadStrategy(StrategyEntry strategyEntry)
         {
             if(strategyEntry == null)
             {
@@ -86,7 +87,15 @@ namespace StockTrader
                 return;
             }
 
-            SelectedStrategyTextBlock.Text = strategyEntry.BucketStrategyName;
+            if (strategyEntry.TypeName == "BucketStrategy")
+                LoadBucketStrategy((BucketStrategyEntry)strategyEntry);
+            
+            // else load the swing strategy
+        }
+
+        private void LoadBucketStrategy(BucketStrategyEntry strategyEntry)
+        {
+            SelectedStrategyTextBlock.Text = strategyEntry.StrategyName;
 
             TestGrid.Visibility = Visibility.Collapsed;
             SummaryGrid.Visibility = Visibility.Visible;
@@ -97,7 +106,7 @@ namespace StockTrader
             currentbucketStrategyIndex = -1;
             for(int iii = 0; iii < MainPage.runningBucketStrategies.Count; ++iii)
             {
-                if (MainPage.runningBucketStrategies[iii].m_strategyName == strategyEntry.BucketStrategyName)
+                if (MainPage.runningBucketStrategies[iii].m_strategyName == strategyEntry.StrategyName)
                 {
                     currentbucketStrategyIndex = iii;
                     break;
@@ -155,24 +164,36 @@ namespace StockTrader
         {
             // get index for the strategy to remove
             int index = -1;
-            for(int iii = 0; iii < bucketStrategyList.Count; ++iii)
+            for(int iii = 0; iii < strategyList.Count; ++iii)
             {
-                if(bucketStrategyList[iii].BucketStrategyName == SelectedStrategyTextBlock.Text)
+                if(strategyList[iii].StrategyName == SelectedStrategyTextBlock.Text)
                 {
                     index = iii;
                     break;
                 }
             }
 
-            // remove the strategy from the list and from main page list
-            bucketStrategyList.RemoveAt(index);
-            MainPage.runningBucketStrategies.RemoveAt(index);
+            if (strategyList[index].TypeName == "BucketStrategy")
+            {
+                for (int iii = 0; iii < MainPage.runningBucketStrategies.Count; ++iii)
+                {
+                    if(MainPage.runningBucketStrategies[iii].m_strategyName == strategyList[index].StrategyName)
+                    {
+                        MainPage.runningBucketStrategies.RemoveAt(iii);
+                        break;
+                    }
+                }
+            }
+            // else if it is a swing strategy, remove from that list instead
+
+            // remove the strategy from the list
+            strategyList.RemoveAt(index);
 
             // Load the new first element on the list if there is one
-            if (bucketStrategyList.Count == 0)
+            if (strategyList.Count == 0)
                 LoadStrategy(null);
             else
-                LoadStrategy(bucketStrategyList[0]);
+                LoadStrategy(strategyList[0]);
         }
 
 
