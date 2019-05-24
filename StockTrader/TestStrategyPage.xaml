@@ -37,88 +37,105 @@
 
             <Border Grid.Row="1" BorderBrush="White" BorderThickness="2,2,0,2">
                 <Grid>
-                    <Grid Name="SummaryGrid">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="*" />
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
+                    <Grid Name="DisplaySwingStrategySummary">
 
-                        <TextBlock Grid.Column="0" Grid.Row="0" Text="Number of Categories:" Margin="20,10,0,10" FontSize="24" />
-                        <TextBlock Grid.Column="1" Grid.Row="0" Name="NumberOfCategories" Margin="20,10,0,10" FontSize="24" />
-
-                        <TextBlock Grid.Column="0" Grid.Row="1" Text="Largest Category Size:" Margin="20,10,0,10" FontSize="24" />
-                        <TextBlock Grid.Column="1" Grid.Row="1" Name="LargestCategorySize" Margin="20,10,0,10" FontSize="24" />
-
-                        <TextBlock Grid.Column="0" Grid.Row="2" Text="Average Category Size:" Margin="20,10,0,10" FontSize="24" />
-                        <TextBlock Grid.Column="1" Grid.Row="2" Name="AverageCategorySize" Margin="20,10,0,10" FontSize="24" />
-
-                        <CustomControl:BucketBarGraphControl x:Name="BucketBarGraph" Grid.Row="3" Grid.ColumnSpan="2"/>
-                        
                     </Grid>
 
-                    <Grid Name="TestGrid" Visibility="Collapsed">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="*" />
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
+                    <Grid Name="DisplayBucketStrategySummary" >
+                        <Grid Name="SummaryGrid">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="3*" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
 
-                        <Grid Grid.Row="0" Grid.ColumnSpan="2">
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Category Number:" FontSize="16" Margin="15,0,5,0" VerticalAlignment="Center"/>
-                                <TextBox Name="CategoryNumberTextBox" Margin="5,5,0,0" VerticalAlignment="Center" PlaceholderText="1 - 50"/>
+                            <TextBlock Grid.Column="0" Grid.Row="0" Text="Number of Categories:" Margin="20,10,0,10" FontSize="24" />
+                            <TextBlock Grid.Column="1" Grid.Row="0" Name="NumberOfCategories" Margin="20,10,0,10" FontSize="24" />
 
-                                <TextBlock Text="Add Stock To Test:" FontSize="16" Margin="20,0,5,0" VerticalAlignment="Center" />
-                                <AutoSuggestBox Name="AddTickerAutoSuggestBox" Height="32" Width="175" VerticalAlignment="Center" TextChanged="AddTickerAutoSuggestBox_TextChanged"  QueryIcon="Find" SuggestionChosen="AddTickerAutoSuggestBox_SuggestionChosen"  AutoMaximizeSuggestionArea="True" UpdateTextOnSelect="False" QuerySubmitted="AddTickerAutoSuggestBox_QuerySubmitted" />
+                            <TextBlock Grid.Column="0" Grid.Row="1" Text="Largest Category Size:" Margin="20,10,0,10" FontSize="24" />
+                            <TextBlock Grid.Column="1" Grid.Row="1" Name="LargestCategorySize" Margin="20,10,0,10" FontSize="24" />
 
-                                <TextBlock Text="Duration To Back Test:" FontSize="18" Margin="20,0,5,0" VerticalAlignment="Center" />
-                                <ComboBox Name="BackTestTimeFrameComboBox" Width="110" VerticalAlignment="Center">
-                                    <ComboBoxItem Name="BackTestTimeFrame1Month" Content="1 Month" />
-                                    <ComboBoxItem Name="BackTestTimeFrame3Months" Content="3 Months" />
-                                    <ComboBoxItem Name="BackTestTimeFrame6Months" Content="6 Months" />
-                                    <ComboBoxItem Name="BackTestTimeFrame1Year" Content="1 Year" />
-                                    <ComboBoxItem Name="BackTestTimeFrame3Years" Content="2 Years" />
-                                    <ComboBoxItem Name="BackTestTimeFrame5Years" Content="5 Years" />
-                                </ComboBox>
-                            </StackPanel>
+                            <TextBlock Grid.Column="0" Grid.Row="2" Text="Average Category Size:" Margin="20,10,0,10" FontSize="24" />
+                            <TextBlock Grid.Column="1" Grid.Row="2" Name="AverageCategorySize" Margin="20,10,0,10" FontSize="24" />
+
+                            <CustomControl:BucketBarGraphControl x:Name="BucketBarGraph" Grid.Row="3" Grid.ColumnSpan="2"/>
+                            <CustomControl:BucketBarGraphControl x:Name="BucketBarGraphCount" Grid.Row="4" Grid.ColumnSpan="2"/>
+
                         </Grid>
 
-                        <Grid Grid.Row="1" Grid.Column="1" >
-                            <ListView x:Name="AddedStocksListView" ItemsSource="{x:Bind addedStockList, Mode=OneWay}" IsItemClickEnabled="False">
-                                <ListView.ItemTemplate>
-                                    <DataTemplate x:DataType="data:AddedStock">
-                                        <Grid Height="30">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="50" />
-                                                <ColumnDefinition Width="*" />
-                                            </Grid.ColumnDefinitions>
+                        <Grid Name="TestGrid" Visibility="Collapsed">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
 
-                                            <TextBlock Text="{x:Bind Ticker, Mode=OneWay}" FontSize="18" HorizontalAlignment="Stretch" TextAlignment="Left" Foreground="White" VerticalAlignment="Center" Margin="0"/>
-                                            <Button Name="AddedStockListButton" Grid.Column="1" Background="Black" Foreground="White" FontFamily="Segoe MDL2 Assets" Content="&#xE711;"  VerticalAlignment="Center" HorizontalAlignment="Right" Padding="0" Click="AddedStockListRemoveButton_Click"/>
+                            <Grid Grid.Row="0" Grid.ColumnSpan="2">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Category Number:" FontSize="16" Margin="15,0,5,0" VerticalAlignment="Center"/>
+                                    <TextBox Name="CategoryNumberTextBox" Margin="5,5,0,0" VerticalAlignment="Center" PlaceholderText="1 - 50"/>
 
-                                        </Grid>
-                                    </DataTemplate>
-                                </ListView.ItemTemplate>
-                            </ListView>
+                                    <TextBlock Text="Add Stock To Test:" FontSize="16" Margin="20,0,5,0" VerticalAlignment="Center" />
+                                    <AutoSuggestBox Name="AddTickerAutoSuggestBox" Height="32" Width="175" VerticalAlignment="Center" TextChanged="AddTickerAutoSuggestBox_TextChanged"  QueryIcon="Find" SuggestionChosen="AddTickerAutoSuggestBox_SuggestionChosen"  AutoMaximizeSuggestionArea="True" UpdateTextOnSelect="False" QuerySubmitted="AddTickerAutoSuggestBox_QuerySubmitted" />
 
-                            <Button Name="ResetTestButton" Content="Reset" FontSize="18" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,0,5,10" Click="ResetTestButton_Click"/>
-                        </Grid>
-
-                        <Grid Grid.Row="1">
-                            <Grid Name="RunButtonGrid">
-                                <Button Name="RunTestButton" Content="Run Test" FontSize="24" VerticalAlignment="Center" HorizontalAlignment="Center" Click="RunTestButton_Click" />
+                                    <TextBlock Text="Duration To Back Test:" FontSize="18" Margin="20,0,5,0" VerticalAlignment="Center" />
+                                    <ComboBox Name="BackTestTimeFrameComboBox" Width="110" VerticalAlignment="Center">
+                                        <ComboBoxItem Name="BackTestTimeFrame1Month" Content="1 Month" />
+                                        <ComboBoxItem Name="BackTestTimeFrame3Months" Content="3 Months" />
+                                        <ComboBoxItem Name="BackTestTimeFrame6Months" Content="6 Months" />
+                                        <ComboBoxItem Name="BackTestTimeFrame1Year" Content="1 Year" />
+                                        <ComboBoxItem Name="BackTestTimeFrame3Years" Content="2 Years" />
+                                        <ComboBoxItem Name="BackTestTimeFrame5Years" Content="5 Years" />
+                                    </ComboBox>
+                                </StackPanel>
                             </Grid>
-                            <Grid Name="RunTestGrid" Visibility="Collapsed">
-                                
+
+                            <Grid Grid.Row="1" Grid.Column="1" >
+                                <ListView x:Name="AddedStocksListView" ItemsSource="{x:Bind addedStockList, Mode=OneWay}" IsItemClickEnabled="False">
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate x:DataType="data:AddedStock">
+                                            <Grid Height="30">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="50" />
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+
+                                                <TextBlock Text="{x:Bind Ticker, Mode=OneWay}" FontSize="18" HorizontalAlignment="Stretch" TextAlignment="Left" Foreground="White" VerticalAlignment="Center" Margin="0"/>
+                                                <Button Name="AddedStockListButton" Grid.Column="1" Background="Black" Foreground="White" FontFamily="Segoe MDL2 Assets" Content="&#xE711;"  VerticalAlignment="Center" HorizontalAlignment="Right" Padding="0" Click="AddedStockListRemoveButton_Click"/>
+
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+
+                                <Button Name="ResetTestButton" Content="Reset" FontSize="18" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,0,5,10" Click="ResetTestButton_Click"/>
+                            </Grid>
+
+                            <Grid Grid.Row="1">
+                                <Grid Name="RunButtonGrid">
+                                    <Button Name="RunTestButton" Content="Run Test" FontSize="24" VerticalAlignment="Center" HorizontalAlignment="Center" Click="RunTestButton_Click" />
+                                </Grid>
+                                <Grid Name="RunTestGrid" Visibility="Collapsed">
+                                    <StackPanel Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="Number of Trades: " Margin="0,0,10,0"/>
+                                            <TextBlock Name="TotalBuysTextBlock" />
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="Rate of Return:   " Margin="0,0,33,0"/>
+                                            <TextBlock Name="RORTextBlock" />
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Grid>
                             </Grid>
                         </Grid>
                     </Grid>
@@ -137,11 +154,11 @@
             </Border>
 
             <Border  Grid.Row="1" BorderBrush="White" BorderThickness="2">
-                <ListView x:Name="StrategiesListView" ItemsSource="{x:Bind bucketStrategyList, Mode=OneWay}" IsItemClickEnabled="True" ItemClick="StrategiesListView_ItemClick">
+                <ListView x:Name="StrategiesListView" ItemsSource="{x:Bind strategyList, Mode=OneWay}" IsItemClickEnabled="True" ItemClick="StrategiesListView_ItemClick">
                     <ListView.ItemTemplate>
-                        <DataTemplate x:DataType="data:BucketStrategyEntry">
+                        <DataTemplate x:DataType="data:StrategyEntry">
                             <Grid>
-                                <TextBlock Text="{x:Bind BucketStrategyName, Mode=OneWay}" />
+                                <TextBlock Text="{x:Bind StrategyName, Mode=OneWay}" />
                             </Grid>
                         </DataTemplate>
                     </ListView.ItemTemplate>

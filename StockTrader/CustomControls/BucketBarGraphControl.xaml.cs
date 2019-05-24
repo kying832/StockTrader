@@ -31,7 +31,7 @@ namespace StockTrader.CustomControls
             this.DataContext = m_data;
         }
 
-        public void Display(BucketStrategy strategy)
+        public void DisplayPercentReturns(BucketStrategy strategy)
         {
             m_data.Clear();
 
@@ -57,6 +57,16 @@ namespace StockTrader.CustomControls
         //        else
           //          m_data.Add(new BarGraphDataPoint() { Value = sum, CategoryName = " " });
 
+            }
+        }
+
+        public void DisplayCategoryCount(BucketStrategy strategy)
+        {
+            m_data.Clear();
+
+            for (int iii = 0; iii < strategy.m_categories.Count(); ++iii)
+            {
+                m_data.Add(new BarGraphDataPoint() { Value = strategy.m_categories[iii].entries.Count(), CategoryName = (iii + 1).ToString() });
             }
         }
     }

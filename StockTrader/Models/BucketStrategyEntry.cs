@@ -7,14 +7,18 @@ using System.Threading.Tasks;
 
 namespace StockTrader.Models
 {
-    class BucketStrategyEntry : INotifyPropertyChanged
+    class BucketStrategyEntry : StrategyEntry, INotifyPropertyChanged
     {
-        public string BucketStrategyName { get; set; }
-
         public BucketStrategyEntry(string bsn)
         {
-            BucketStrategyName = bsn;
+            TypeName = "BucketStrategy";
+            StrategyName = bsn;
             OnPropertyChanged("BucketStrategyName");
+        }
+
+        public string GetTypeName()
+        {
+            return TypeName;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

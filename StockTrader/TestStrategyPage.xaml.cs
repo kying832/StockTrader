@@ -29,9 +29,11 @@ namespace StockTrader
 
     public sealed partial class TestStrategyPage : Page
     {
-        ObservableCollection<BucketStrategyEntry> bucketStrategyList;
+        ObservableCollection<StrategyEntry> strategyList;
         ObservableCollection<AddedStock> addedStockList;
         List<TickerAutoSuggestionEntry> tickerSuggestions;
+
+        public int currentbucketStrategyIndex;
 
         public TestStrategyPage()
         {
@@ -40,10 +42,10 @@ namespace StockTrader
             addedStockList = new ObservableCollection<AddedStock>();
             //we need away to differentiat between swing/bucket machine 1 and 2
 
-            bucketStrategyList = new ObservableCollection<BucketStrategyEntry>();
-            InitializeBucketStrategyList();       
+            strategyList = new ObservableCollection<StrategyEntry>();
+            InitializeStrategyList();       
 
-            if (bucketStrategyList.Count == 0)
+            if (strategyList.Count == 0)
             {
                 TestStrategyPageHeader.Visibility = Visibility.Collapsed;
                 TestGrid.Visibility = Visibility.Collapsed;
@@ -52,30 +54,31 @@ namespace StockTrader
             else
             {
                 TestStrategyPageHeader.Visibility = Visibility.Visible;
-                LoadStrategy(bucketStrategyList[0]);
+                LoadStrategy(strategyList[0]);
             }
         }
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            CategoryNumberTextBox.PlaceholderText = "1 - " + NumberOfCategories.Text;
-
             tickerSuggestions = await TickerAutoSuggestionEntryManager.GetTickerAutoSuggestionEntriesList();
         }
 
-        private void InitializeBucketStrategyList()
+        private void InitializeStrategyList()
         {
-            // add each strategy name to the list
+            // add each bucket strategy name to the list
             foreach (var entry in MainPage.runningBucketStrategies)
-                bucketStrategyList.Add(new BucketStrategyEntry(entry.m_strategyName));
+                strategyList.Add(new BucketStrategyEntry(entry.m_strategyName));
+
+            // also add swing strategies
+
         }
 
         private void StrategiesListView_ItemClick(object sender, ItemClickEventArgs e)
         {
-            LoadStrategy((BucketStrategyEntry)e.ClickedItem);
+            LoadStrategy((StrategyEntry)e.ClickedItem);            
         }
 
-        private void LoadStrategy(BucketStrategyEntry strategyEntry)
+        private void LoadStrategy(StrategyEntry strategyEntry)
         {
             if(strategyEntry == null)
             {
@@ -85,7 +88,15 @@ namespace StockTrader
                 return;
             }
 
-            SelectedStrategyTextBlock.Text = strategyEntry.BucketStrategyName;
+            if (strategyEntry.TypeName == "BucketStrategy")
+                LoadBucketStrategy((BucketStrategyEntry)strategyEntry);
+            
+            // else load the swing strategy
+        }
+
+        private void LoadBucketStrategy(BucketStrategyEntry strategyEntry)
+        {
+            SelectedStrategyTextBlock.Text = strategyEntry.StrategyName;
 
             TestGrid.Visibility = Visibility.Collapsed;
             SummaryGrid.Visibility = Visibility.Visible;
@@ -93,24 +104,24 @@ namespace StockTrader
             // Load the strategy summary ============================================
 
             // get the index of the strategy to load
-            int index = -1;
+            currentbucketStrategyIndex = -1;
             for(int iii = 0; iii < MainPage.runningBucketStrategies.Count; ++iii)
             {
-                if (MainPage.runningBucketStrategies[iii].m_strategyName == strategyEntry.BucketStrategyName)
+                if (MainPage.runningBucketStrategies[iii].m_strategyName == strategyEntry.StrategyName)
                 {
-                    index = iii;
+                    currentbucketStrategyIndex = iii;
                     break;
                 }
             }
 
             // get the total number of categories
-            NumberOfCategories.Text = MainPage.runningBucketStrategies[index].m_categories.Count.ToString();
+            NumberOfCategories.Text = MainPage.runningBucketStrategies[currentbucketStrategyIndex].m_categories.Count.ToString();
 
             // largest and average category size
             int maxCategory = 0;
             double avgCategory = 0;
 
-            foreach (var entry in MainPage.runningBucketStrategies[index].m_categories)
+            foreach (var entry in MainPage.runningBucketStrategies[currentbucketStrategyIndex].m_categories)
             {
                 avgCategory += entry.entries.Count();
 
@@ -118,13 +129,18 @@ namespace StockTrader
                     maxCategory = entry.entries.Count();
             }
 
-            avgCategory /= MainPage.runningBucketStrategies[index].m_categories.Count;
+            avgCategory /= MainPage.runningBucketStrategies[currentbucketStrategyIndex].m_categories.Count;
 
             LargestCategorySize.Text = maxCategory.ToString();
             AverageCategorySize.Text = avgCategory.ToString();
 
             // Load the chart data
-            BucketBarGraph.Display(MainPage.runningBucketStrategies[index]);
+            BucketBarGraph.DisplayPercentReturns(MainPage.runningBucketStrategies[currentbucketStrategyIndex]);
+            BucketBarGraphCount.DisplayCategoryCount(MainPage.runningBucketStrategies[currentbucketStrategyIndex]);
+
+
+            // Load info for the test page
+            CategoryNumberTextBox.PlaceholderText = "1 - " + MainPage.runningBucketStrategies[currentbucketStrategyIndex].m_categories.Count.ToString();
         }
 
         private void ShowStrategySummaryButton_Click(object sender, RoutedEventArgs e)
@@ -149,31 +165,60 @@ namespace StockTrader
         {
             // get index for the strategy to remove
             int index = -1;
-            for(int iii = 0; iii < bucketStrategyList.Count; ++iii)
+            for(int iii = 0; iii < strategyList.Count; ++iii)
             {
-                if(bucketStrategyList[iii].BucketStrategyName == SelectedStrategyTextBlock.Text)
+                if(strategyList[iii].StrategyName == SelectedStrategyTextBlock.Text)
                 {
                     index = iii;
                     break;
                 }
             }
 
-            // remove the strategy from the list and from main page list
-            bucketStrategyList.RemoveAt(index);
-            MainPage.runningBucketStrategies.RemoveAt(index);
+            if (strategyList[index].TypeName == "BucketStrategy")
+            {
+                for (int iii = 0; iii < MainPage.runningBucketStrategies.Count; ++iii)
+                {
+                    if(MainPage.runningBucketStrategies[iii].m_strategyName == strategyList[index].StrategyName)
+                    {
+                        MainPage.runningBucketStrategies.RemoveAt(iii);
+                        break;
+                    }
+                }
+            }
+            // else if it is a swing strategy, remove from that list instead
+
+            // remove the strategy from the list
+            strategyList.RemoveAt(index);
 
             // Load the new first element on the list if there is one
-            if (bucketStrategyList.Count == 0)
+            if (strategyList.Count == 0)
                 LoadStrategy(null);
             else
-                LoadStrategy(bucketStrategyList[0]);
+                LoadStrategy(strategyList[0]);
         }
 
 
-        private void RunTestButton_Click(object sender, RoutedEventArgs e)
+        private async void RunTestButton_Click(object sender, RoutedEventArgs e)
         {
             RunButtonGrid.Visibility = Visibility.Collapsed;
             RunTestGrid.Visibility = Visibility.Visible;
+
+            int categoryIndex = int.Parse(CategoryNumberTextBox.Text) - 1;
+
+            List<string> tickers = new List<string>();
+            foreach (var stock in addedStockList)
+                tickers.Add(stock.Ticker);
+
+            string duration = (string)((ComboBoxItem)((ComboBox)BackTestTimeFrameComboBox).SelectedValue).Content;
+
+
+
+            // determine which strategy is selected then run back test
+            await MainPage.runningBucketStrategies[currentbucketStrategyIndex].BackTest(categoryIndex, tickers, duration);
+
+            RORTextBlock.Text = MainPage.runningBucketStrategies[currentbucketStrategyIndex].m_ROR.ToString();
+            TotalBuysTextBlock.Text = MainPage.runningBucketStrategies[currentbucketStrategyIndex].m_totalBuys.ToString();
+
         }
 
 
@@ -255,6 +300,8 @@ namespace StockTrader
 
             RunTestGrid.Visibility = Visibility.Collapsed;
             RunButtonGrid.Visibility = Visibility.Visible;
+
+            MainPage.runningBucketStrategies[currentbucketStrategyIndex].ResetBackTestPurchaseRecords();
         }
 
 
