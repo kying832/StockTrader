@@ -6,17 +6,23 @@ using System.Text;
 using System.Threading.Tasks;
 
 
-//coped bucket strat
+//inhereits from entry
 namespace StockTrader.Models
 {
-    class SwingStrategyEntry : INotifyPropertyChanged
+    class SwingStrategyEntry : StrategyEntry, INotifyPropertyChanged
     {
-        public string SwingStrategyName { get; set; }
 
-        public SwingStrategyEntry(string bsn)
+
+        public SwingStrategyEntry(string SwingName)
         {
-            SwingStrategyName = bsn;
+            TypeName = "SwingStrategy";
+            StrategyName = SwingName;
             OnPropertyChanged("SwingStrategyEntry");
+        }
+
+        public string GetTypeName()
+        {
+            return TypeName;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
