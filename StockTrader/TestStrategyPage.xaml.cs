@@ -95,6 +95,9 @@ namespace StockTrader
 
         private void LoadBucketStrategy(BucketStrategyEntry strategyEntry)
         {
+            DisplaySwingStrategySummary.Visibility = Visibility.Collapsed;
+            DisplayBucketStrategySummary.Visibility = Visibility.Visible;
+
             SelectedStrategyTextBlock.Text = strategyEntry.StrategyName;
 
             TestGrid.Visibility = Visibility.Collapsed;
