@@ -1,0 +1,2 @@
+﻿Average return is different than compounded return.
+	-> The user should be able to see both to get a sense of what the actual compounding return is like

@@ -33,6 +33,8 @@ namespace StockTrader
         ObservableCollection<AddedStock> addedStockList;
         List<TickerAutoSuggestionEntry> tickerSuggestions;
 
+        public int currentbucketStrategyIndex;
+
         public TestStrategyPage()
         {
             this.InitializeComponent();
@@ -71,7 +73,7 @@ namespace StockTrader
 
         private void StrategiesListView_ItemClick(object sender, ItemClickEventArgs e)
         {
-            LoadStrategy((BucketStrategyEntry)e.ClickedItem);
+            LoadStrategy((BucketStrategyEntry)e.ClickedItem);            
         }
 
         private void LoadStrategy(BucketStrategyEntry strategyEntry)
@@ -92,24 +94,24 @@ namespace StockTrader
             // Load the strategy summary ============================================
 
             // get the index of the strategy to load
-            int index = -1;
+            currentbucketStrategyIndex = -1;
             for(int iii = 0; iii < MainPage.runningBucketStrategies.Count; ++iii)
             {
                 if (MainPage.runningBucketStrategies[iii].m_strategyName == strategyEntry.BucketStrategyName)
                 {
-                    index = iii;
+                    currentbucketStrategyIndex = iii;
                     break;
                 }
             }
 
             // get the total number of categories
-            NumberOfCategories.Text = MainPage.runningBucketStrategies[index].m_categories.Count.ToString();
+            NumberOfCategories.Text = MainPage.runningBucketStrategies[currentbucketStrategyIndex].m_categories.Count.ToString();
 
             // largest and average category size
             int maxCategory = 0;
             double avgCategory = 0;
 
-            foreach (var entry in MainPage.runningBucketStrategies[index].m_categories)
+            foreach (var entry in MainPage.runningBucketStrategies[currentbucketStrategyIndex].m_categories)
             {
                 avgCategory += entry.entries.Count();
 
@@ -117,13 +119,18 @@ namespace StockTrader
                     maxCategory = entry.entries.Count();
             }
 
-            avgCategory /= MainPage.runningBucketStrategies[index].m_categories.Count;
+            avgCategory /= MainPage.runningBucketStrategies[currentbucketStrategyIndex].m_categories.Count;
 
             LargestCategorySize.Text = maxCategory.ToString();
             AverageCategorySize.Text = avgCategory.ToString();
 
             // Load the chart data
-            BucketBarGraph.Display(MainPage.runningBucketStrategies[index]);
+            BucketBarGraph.DisplayPercentReturns(MainPage.runningBucketStrategies[currentbucketStrategyIndex]);
+            BucketBarGraphCount.DisplayCategoryCount(MainPage.runningBucketStrategies[currentbucketStrategyIndex]);
+
+
+            // Load info for the test page
+            CategoryNumberTextBox.PlaceholderText = "1 - " + MainPage.runningBucketStrategies[currentbucketStrategyIndex].m_categories.Count.ToString();
         }
 
         private void ShowStrategySummaryButton_Click(object sender, RoutedEventArgs e)
@@ -169,10 +176,27 @@ namespace StockTrader
         }
 
 
-        private void RunTestButton_Click(object sender, RoutedEventArgs e)
+        private async void RunTestButton_Click(object sender, RoutedEventArgs e)
         {
             RunButtonGrid.Visibility = Visibility.Collapsed;
             RunTestGrid.Visibility = Visibility.Visible;
+
+            int categoryIndex = int.Parse(CategoryNumberTextBox.Text) - 1;
+
+            List<string> tickers = new List<string>();
+            foreach (var stock in addedStockList)
+                tickers.Add(stock.Ticker);
+
+            string duration = (string)((ComboBoxItem)((ComboBox)BackTestTimeFrameComboBox).SelectedValue).Content;
+
+
+
+            // determine which strategy is selected then run back test
+            await MainPage.runningBucketStrategies[currentbucketStrategyIndex].BackTest(categoryIndex, tickers, duration);
+
+            RORTextBlock.Text = MainPage.runningBucketStrategies[currentbucketStrategyIndex].m_ROR.ToString();
+            TotalBuysTextBlock.Text = MainPage.runningBucketStrategies[currentbucketStrategyIndex].m_totalBuys.ToString();
+
         }
 
 
@@ -254,6 +278,8 @@ namespace StockTrader
 
             RunTestGrid.Visibility = Visibility.Collapsed;
             RunButtonGrid.Visibility = Visibility.Visible;
+
+            MainPage.runningBucketStrategies[currentbucketStrategyIndex].ResetBackTestPurchaseRecords();
         }
 
 

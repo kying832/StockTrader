@@ -24,32 +24,38 @@ namespace StockTrader
 
             entries.Add(new List<double>());
 
-            foreach (var entry in data)
+            for(int iii = 0; iii < data.Count(); ++iii)
             {
-                entries[0].Add(entry);
-                aggregate.Add(entry);
+                entries[0].Add(data[iii]);
+                aggregate.Add(data[iii]);
             }
         }
 
         public double ComputeSimilarity(List<double> data)
         {
-            double similarityMax = 0;
-            double similaritySum = 0;
-            double percentDifference;
+            // double similarityMax = 0;
+            // double similaritySum = 0;
+            // double percentDifference;
 
             // compare to the aggregate
-            for (int iii = 0; iii < aggregate.Count() - 1; ++iii)    // dont include the last data point because it is the return percent
+            double diff, sum = 0.0;
+            for (int iii = 0; iii < aggregate.Count() - 1; ++iii)   // don't include the percent return at the end
             {
-                percentDifference = (data[iii] - aggregate[iii]) / aggregate[iii];      // data and aggregate values will be [0, 1]
-                if (percentDifference < 0) percentDifference *= -1;                     // swap the sign of the difference
+                diff = data[iii] - aggregate[iii];  // compute the difference
+                diff *= diff;                       // square it
 
-                similaritySum += (1 - percentDifference);
+                sum += diff;
 
+                // percentDifference = Math.Abs(data[iii] - aggregate[iii]) / aggregate[iii];      // data and aggregate values will be [0, 1)
+                // similaritySum += (1 - percentDifference);
                 // sum += (difference * difference);            // difference can be [-1, 1] -> sum can be [0, data.Count()]
             }
 
-            // get an average difference-squared value
-            return similaritySum / data.Count();                      // this will make sum between [0, 1]
+            sum = Math.Sqrt(sum);   // take the square root of the sum of differences squared
+
+            return 1 - sum;         // The smaller the sum, the larger the return value
+
+            //return similaritySum / data.Count();                      // this will make sum between [0, 1]
 
             /*
             foreach (var entry in entries)
@@ -81,15 +87,18 @@ namespace StockTrader
             entries.Add(new List<double>());
             int lastEntryIndex = entries.Count() - 1;
 
-            foreach (var entry in data)
-                entries[lastEntryIndex].Add(entry);
+            for(int iii = 0; iii < data.Count(); ++iii)
+                entries[lastEntryIndex].Add(data[iii]);
 
             aggregate.Clear();
 
+            int numberOfEntries;
+            double sum;
+
             for (int iii = 0; iii < entries[0].Count(); ++iii)
             {
-                double sum = 0;
-                int numberOfEntries = entries.Count();
+                sum = 0;
+                numberOfEntries = entries.Count();
 
                 foreach (var list in entries)
                     sum += list[iii];

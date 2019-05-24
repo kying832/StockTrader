@@ -42,6 +42,7 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
+                            <RowDefinition Height="3*" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
@@ -59,7 +60,8 @@
                         <TextBlock Grid.Column="1" Grid.Row="2" Name="AverageCategorySize" Margin="20,10,0,10" FontSize="24" />
 
                         <CustomControl:BucketBarGraphControl x:Name="BucketBarGraph" Grid.Row="3" Grid.ColumnSpan="2"/>
-                        
+                        <CustomControl:BucketBarGraphControl x:Name="BucketBarGraphCount" Grid.Row="4" Grid.ColumnSpan="2"/>
+
                     </Grid>
 
                     <Grid Name="TestGrid" Visibility="Collapsed">
@@ -118,7 +120,16 @@
                                 <Button Name="RunTestButton" Content="Run Test" FontSize="24" VerticalAlignment="Center" HorizontalAlignment="Center" Click="RunTestButton_Click" />
                             </Grid>
                             <Grid Name="RunTestGrid" Visibility="Collapsed">
-                                
+                                <StackPanel Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="Number of Trades: " Margin="0,0,10,0"/>
+                                        <TextBlock Name="TotalBuysTextBlock" />
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="Rate of Return:   " Margin="0,0,33,0"/>
+                                        <TextBlock Name="RORTextBlock" />
+                                    </StackPanel>
+                                </StackPanel>
                             </Grid>
                         </Grid>
                     </Grid>

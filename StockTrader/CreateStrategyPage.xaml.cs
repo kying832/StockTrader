@@ -261,7 +261,7 @@ namespace StockTrader
             // can make this multi-threaded
             ErrorMessageTextBlock.Text = "Running...";
             MainPage.runningBucketStrategies.Add(new BucketStrategy(strategyName, tickerList, dataTimeFrame, slidingWindowSize, futureReturnDate, normalizationFunction, similarityThreshold));
-            await MainPage.runningBucketStrategies[MainPage.runningBucketStrategies.Count() - 1].Run();
+            await MainPage.runningBucketStrategies[MainPage.runningBucketStrategies.Count() - 1].Create();
             ErrorMessageTextBlock.Text = "Finished";
         }
 
