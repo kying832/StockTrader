@@ -19,9 +19,14 @@ namespace StockTrader
 {
     public sealed partial class MainPage : Page
     {
+        // persistent data for active strategies
+        public static List<BucketStrategy> runningBucketStrategies;
+
         public MainPage()
         {
             this.InitializeComponent();
+
+            runningBucketStrategies = new List<BucketStrategy>();
 
             // navigate to the last viewed page
             NavigateToLastViewedPage();
