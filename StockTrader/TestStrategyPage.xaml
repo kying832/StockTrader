@@ -26,7 +26,7 @@
 
             <Grid  Name="TestStrategyPageHeader">
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Strategy: " FontSize="24" Margin="15,10"/>
+                    <TextBlock Text="Strategy: " FontSize="24" Margin="15,10" SelectionChanged="TextBlock_SelectionChanged_1"/>
                     <TextBlock Name="SelectedStrategyTextBlock" FontSize="24" Margin="5,10"/>
                     <Button Name="ShowStrategySummaryButton" Content="Show Summary" Margin="30,10,10,10" Click="ShowStrategySummaryButton_Click"/>
                     <Button Name="ShowTestPageButton" Content="Show Test Page" Margin="10" Click="ShowTestPageButton_Click"/>
@@ -38,11 +38,39 @@
             <Border Grid.Row="1" BorderBrush="White" BorderThickness="2,2,0,2">
                 <Grid>
                     <Grid Name="DisplaySwingStrategySummary">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="3*" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+
+                        <TextBlock Grid.Column="0" Grid.Row="0" Text="Name of Stock:" Margin="20,10,0,10" FontSize="24" />
+                        <TextBlock Grid.Column="1" Grid.Row="0" Name="SwingTickerAnswer" Margin="20,10,0,10" FontSize="24" />
+
+                        <TextBlock Grid.Column="0" Grid.Row="1" Text="Number of Days:" Margin="20,10,0,10" FontSize="24" />
+                        <TextBlock Grid.Column="1" Grid.Row="1" Name="SwingNumberOfDays" Margin="20,10,0,10" FontSize="24" />
+
+                        <TextBlock Grid.Column="0" Grid.Row="2" Text="Moving Average of Time Frame:" Margin="20,10,0,10" FontSize="24" />
+                        <TextBlock Grid.Column="1" Grid.Row="2" Name="SwingMovingAverage" Margin="20,10,0,10" FontSize="24" />
+
+                        <TextBlock Grid.Column="0" Grid.Row="3" Text="5 Day Moving Average:" Margin="20,10,0,10" FontSize="24" />
+                        <TextBlock Grid.Column="1" Grid.Row="3" Name="SwingAverage" Margin="20,10,0,10" FontSize="24" />
+
+                        <TextBlock Grid.Column="0" Grid.Row="4" Text="Is this stock a buy?" Margin="20,10,0,10" FontSize="24" />
+                        <TextBlock Grid.Column="1" Grid.Row="4" Name="SwingBuy" Margin="20,10,0,10" FontSize="24" />
+
 
                     </Grid>
 
                     <Grid Name="DisplayBucketStrategySummary" >
-                        <Grid Name="SummaryGrid">
+                        <Grid Name="SummaryGrid" Visibility="Collapsed">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
@@ -148,7 +176,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            
+
             <Border BorderBrush="White" BorderThickness="2,1,2,0">
                 <TextBlock Text="Strategies" Padding="5" FontSize="18" />
             </Border>
@@ -165,6 +193,6 @@
                 </ListView>
             </Border>
         </Grid>
-        
+
     </Grid>
 </Page>

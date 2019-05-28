@@ -31,21 +31,7 @@ using IEXDataLibrary;
 
 
 
-    public struct StockAverage
-    {
-        public string Ticker;
-        public double Average;
-        public double MovingAverage;
-        public int buy;
-        //1 yes buy, 0 no buy.
-        public StockAverage(string Ticker, double Average, double MovingAverage, int buy)
-        {
-            this.Ticker = Ticker;
-            this.Average = Average;
-            this.MovingAverage = MovingAverage;
-            this.buy = buy;
-        }
-    }
+
 
  
 
@@ -55,7 +41,10 @@ using IEXDataLibrary;
         public string s_stratName;
         public List<string> s_tickers;
         public int s_days;
-
+        public double s_average;
+        public double s_MovingAverage;
+        public int s_buy;
+        public int s_numStocks;
 
 
         public SwingStrategy(string sN, List<string> t, string daysToAnalyze)
@@ -105,7 +94,9 @@ using IEXDataLibrary;
             int ticker_count=s_tickers.Count();
             int numDays = s_days;
 
-            List<StockAverage> averages = new List<StockAverage>();
+
+            s_numStocks = ticker_count;
+
 
             for (int i = 0; i< s_tickers.Count(); i++)
             {
@@ -133,35 +124,29 @@ using IEXDataLibrary;
                     tempSum /= 4;
                     movingaverage += tempSum;
                 }
-
+          
                 //average of total month
                 sum /= numDays;
+                s_average = sum;
                 //normalize to 5 days
                 movingaverage /= 5;
+                s_MovingAverage = movingaverage;
 
-                int goodBuy = 0;
 
 
                 //now average and moving average have been compared
                 //now evaluate swing
                 //Compare averages, if 5 day moving average is < 20 day ,that is a buy
                 if (movingaverage * .85 > sum)
-                { goodBuy = 1; }
+                { s_buy = 1; }
                 else if (movingaverage * .85 < sum)
-                { goodBuy = 0; }
+                { s_buy = 0; }
 
-                    averages.Add(new StockAverage(s_tickers[i], sum, movingaverage, goodBuy));
+   
             }
 
 
-
-
-
-
-
         }
-
-
 
 
         //get the information for each stock

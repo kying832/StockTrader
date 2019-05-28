@@ -281,7 +281,9 @@ namespace StockTrader
             // Verify that at least one valid ticker has been specified
             if (SwingaddedStockList.Count() <= 0)
                 errorMessages.Add("Error: You must select at least one stock to add to the strategy.");
-
+            //may change this later but doesnt make logic sense to look at more than 1
+            if (SwingaddedStockList.Count() >= 2)
+                errorMessages.Add("Error: You must add only one stock to the strategy.");
 
             // Verify that data to gather has been entered
             if (((ComboBoxItem)DaySelectionForSwing.SelectedValue) == null)

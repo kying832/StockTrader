@@ -34,6 +34,7 @@ namespace StockTrader
         List<TickerAutoSuggestionEntry> tickerSuggestions;
 
         public int currentbucketStrategyIndex;
+        public int currentSwingIndex;
 
         public TestStrategyPage()
         {
@@ -50,6 +51,7 @@ namespace StockTrader
                 TestStrategyPageHeader.Visibility = Visibility.Collapsed;
                 TestGrid.Visibility = Visibility.Collapsed;
                 SummaryGrid.Visibility = Visibility.Collapsed;
+                DisplaySwingStrategySummary.Visibility = Visibility.Collapsed;
             }
             else
             {
@@ -70,7 +72,8 @@ namespace StockTrader
                 strategyList.Add(new BucketStrategyEntry(entry.m_strategyName));
 
             // also add swing strategies
-
+            foreach (var entry in MainPage.runningSwingStrategies)
+                strategyList.Add(new SwingStrategyEntry(entry.s_stratName));
         }
 
         private void StrategiesListView_ItemClick(object sender, ItemClickEventArgs e)
@@ -85,13 +88,19 @@ namespace StockTrader
                 TestStrategyPageHeader.Visibility = Visibility.Collapsed;
                 TestGrid.Visibility = Visibility.Collapsed;
                 SummaryGrid.Visibility = Visibility.Collapsed;
+                DisplaySwingStrategySummary.Visibility = Visibility.Collapsed;
                 return;
             }
 
             if (strategyEntry.TypeName == "BucketStrategy")
                 LoadBucketStrategy((BucketStrategyEntry)strategyEntry);
-            
+
             // else load the swing strategy
+
+            if (strategyEntry.TypeName == "SwingStrategy")
+                LoadSwingStrategy((SwingStrategyEntry)strategyEntry);
+
+            //machine1 and 2
         }
 
         private void LoadBucketStrategy(BucketStrategyEntry strategyEntry)
@@ -100,8 +109,9 @@ namespace StockTrader
             DisplayBucketStrategySummary.Visibility = Visibility.Visible;
 
             SelectedStrategyTextBlock.Text = strategyEntry.StrategyName;
-
+            DisplaySwingStrategySummary.Visibility = Visibility.Collapsed;
             TestGrid.Visibility = Visibility.Collapsed;
+
             SummaryGrid.Visibility = Visibility.Visible;
 
             // Load the strategy summary ============================================
@@ -146,6 +156,48 @@ namespace StockTrader
             CategoryNumberTextBox.PlaceholderText = "1 - " + MainPage.runningBucketStrategies[currentbucketStrategyIndex].m_categories.Count.ToString();
         }
 
+        private void LoadSwingStrategy(SwingStrategyEntry strategyEntry)
+        {
+            SelectedStrategyTextBlock.Text = strategyEntry.StrategyName;
+
+            //turns on grid
+            SummaryGrid.Visibility = Visibility.Collapsed;
+            TestGrid.Visibility = Visibility.Collapsed;
+            DisplaySwingStrategySummary.Visibility = Visibility.Visible;
+
+            //load the strat, variable list in main
+
+
+            currentSwingIndex = -1;
+            for (int i = 0; i < MainPage.runningSwingStrategies.Count; ++i)
+            {
+                if (MainPage.runningSwingStrategies[i].s_stratName == strategyEntry.StrategyName)
+                {
+                    currentSwingIndex = i;
+                    break;
+                }
+            }
+            //int currentNumStock;
+            //currentNumStock=MainPage.runningSwingStrategies[currentSwingIndex].s_numStocks;
+
+            SwingTickerAnswer.Text = MainPage.runningSwingStrategies[currentSwingIndex].s_tickers[0].ToString();
+            SwingNumberOfDays.Text = MainPage.runningSwingStrategies[currentSwingIndex].s_days.ToString();
+            SwingAverage.Text = MainPage.runningSwingStrategies[currentSwingIndex].s_average.ToString();
+            SwingMovingAverage.Text = MainPage.runningSwingStrategies[currentSwingIndex].s_MovingAverage.ToString();
+
+            if (MainPage.runningSwingStrategies[currentSwingIndex].s_buy == 1)
+            {
+                SwingBuy.Text = "Yes, buy";
+            }
+            else if (MainPage.runningSwingStrategies[currentSwingIndex].s_buy == 0)
+            {
+                SwingBuy.Text = "Do not buy";
+            }
+            else
+                SwingBuy.Text = "Error, cannot be determined at this time";
+        }
+
+
         private void ShowStrategySummaryButton_Click(object sender, RoutedEventArgs e)
         {
             if(SummaryGrid.Visibility == Visibility.Collapsed)
@@ -189,7 +241,17 @@ namespace StockTrader
                 }
             }
             // else if it is a swing strategy, remove from that list instead
-
+            if (strategyList[index].TypeName == "SwingStrategy")
+            {
+                for (int i = 0; i < MainPage.runningSwingStrategies.Count; ++i)
+                {
+                    if (MainPage.runningSwingStrategies[i].s_stratName == strategyList[index].StrategyName)
+                    {
+                        MainPage.runningSwingStrategies.RemoveAt(i);
+                        break;
+                    }
+                }
+            }
             // remove the strategy from the list
             strategyList.RemoveAt(index);
 
@@ -307,6 +369,19 @@ namespace StockTrader
             MainPage.runningBucketStrategies[currentbucketStrategyIndex].ResetBackTestPurchaseRecords();
         }
 
+        private void TextBlock_SelectionChanged(object sender, RoutedEventArgs e)
+        {
 
+        }
+
+        private void StrategiesListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+
+        private void TextBlock_SelectionChanged_1(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
