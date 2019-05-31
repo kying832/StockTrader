@@ -153,6 +153,10 @@
                                     <Button Name="RunTestButton" Content="Run Test" FontSize="24" VerticalAlignment="Center" HorizontalAlignment="Center" Click="RunTestButton_Click" />
                                 </Grid>
                                 <Grid Name="RunTestGrid" Visibility="Collapsed">
+
+                                    <CustomControl:PerformanceChart x:Name="RORPerformanceChart" />
+
+                                    <!--
                                     <StackPanel Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Center">
                                         <StackPanel Orientation="Horizontal">
                                             <TextBlock Text="Number of Trades: " Margin="0,0,10,0"/>
@@ -163,6 +167,7 @@
                                             <TextBlock Name="RORTextBlock" />
                                         </StackPanel>
                                     </StackPanel>
+                                    -->
                                 </Grid>
                             </Grid>
                         </Grid>

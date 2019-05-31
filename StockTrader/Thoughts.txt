@@ -1,2 +1,8 @@
-﻿Average return is different than compounded return.
-	-> The user should be able to see both to get a sense of what the actual compounding return is like
+﻿
+Run Strategy Page:
+	1. Page to show running strategies and add new ones
+		a. ListView of currently selected running strategies
+			i. ability to remove a running strategy from the list
+	2. A page to show performance
+		a. Graph the performance
+		b. Show a listview containing the details of the trades made

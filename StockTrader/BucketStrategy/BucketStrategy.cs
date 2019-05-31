@@ -16,6 +16,13 @@ namespace StockTrader
         public double similarityValue { get; set; }
         public double price { get; set; }
         public double percentReturn { get; set; }
+        public string date { get; set; }
+    }
+
+    public class StockDataPoint
+    {
+        public string date { get; set; }
+        public double value { get; set; }
     }
 
     public class BucketStrategy
@@ -27,6 +34,11 @@ namespace StockTrader
         public string       m_futureReturnDate;
         public string       m_normalizationFunction;
         public float        m_similarityThreshold;
+
+        // readable representations
+        public string m_dataTimeFrame_Readable;
+        public string m_slidingWindowSize_Readable;
+        public string m_futureReturnDate_Readable;
 
         // this is just for testing backtest -> create an actual class to hold this and other data
         public double       m_ROR;
@@ -42,9 +54,15 @@ namespace StockTrader
         public BucketStrategy(string sN, List<string> t, string dTF, string sWS, string fRD, string nF, float sT)
         {
             m_strategyName              = sN;
+
+            m_dataTimeFrame_Readable     = dTF;
+            m_slidingWindowSize_Readable = sWS;
+            m_futureReturnDate_Readable  = fRD;
+
             m_dataTimeFrame             = ProcessDuration(dTF);
             m_slidingWindowSize         = ProcessDuration(sWS);
             m_futureReturnDate          = ProcessDuration(fRD);
+
             m_normalizationFunction     = nF;
             m_similarityThreshold       = sT;
 
@@ -62,7 +80,7 @@ namespace StockTrader
         public async Task Create()
         {
             // Gather data
-            List<List<double>> allData = new List<List<double>>();
+            List<List<StockDataPoint>> allData = new List<List<StockDataPoint>>();
 
             foreach(string ticker in m_tickers)
                 allData.Add(await GetStockData(ticker));
@@ -83,7 +101,7 @@ namespace StockTrader
             double similarityValue, mostSimilarValue;
             List<double> windowData = new List<double>();
 
-            foreach(List<double> data in allData)
+            foreach(List<StockDataPoint> data in allData)
             {
                 index = 0;
                 maxIndex = data.Count() - 1;
@@ -93,7 +111,7 @@ namespace StockTrader
                     // get a window of data
                     windowData.Clear();
                     for (int iii = index; iii < index + windowSize; ++iii)
-                        windowData.Add(data[iii]);
+                        windowData.Add(data[iii].value);
 
                     // normalize the data
                     normalize(ref windowData);
@@ -172,7 +190,7 @@ namespace StockTrader
             AnalysisCategory category = m_categories[categoryIndex];
 
             // obtain all data for all given tickers
-            List<List<double>> tickerData = new List<List<double>>();
+            List<List<StockDataPoint>> tickerData = new List<List<StockDataPoint>>();
             string dur = ProcessDuration(duration);
             foreach (var ticker in tickers)
                 tickerData.Add(await GetStockData(ticker, dur));
@@ -192,7 +210,7 @@ namespace StockTrader
                     // obtain the window of data
                     windowData.Clear();
                     for (int kkk = 0; kkk < windowSize; ++kkk)
-                        windowData.Add(tickerData[jjj][iii + kkk]);
+                        windowData.Add(tickerData[jjj][iii + kkk].value);
 
                     // normalize the window
                     // set the normalization function
@@ -213,7 +231,7 @@ namespace StockTrader
                     {
                         pReturn = ComputeReturnPercentage(tickerData[jjj], iii, windowSize, futureReturnDate);                        
 
-                        m_backtestPurchaseRecord.Add(new StockPurchaseInfo() { ticker = tickers[jjj], similarityValue = similarityVal, price = windowData[windowSize - 1], percentReturn = pReturn });
+                        m_backtestPurchaseRecord.Add(new StockPurchaseInfo() { ticker = tickers[jjj], similarityValue = similarityVal, price = windowData[windowSize - 1], percentReturn = pReturn, date = tickerData[jjj][iii].date });
                     }
                 }
             }
@@ -232,24 +250,26 @@ namespace StockTrader
             m_totalBuys = m_backtestPurchaseRecord.Count();
         }
 
-        private double ComputeReturnPercentage(List<double> data, int index, int windowSize, int futureReturnDate)
+        private double ComputeReturnPercentage(List<StockDataPoint> data, int index, int windowSize, int futureReturnDate)
         {
             int endOfWindowIndex = index + windowSize - 1;
-            return (data[endOfWindowIndex + futureReturnDate] - data[endOfWindowIndex]) / data[endOfWindowIndex];
+            return (data[endOfWindowIndex + futureReturnDate].value - data[endOfWindowIndex].value) / data[endOfWindowIndex].value;
         }
 
-        async Task<List<double>> GetStockData(string ticker, string timeFrame = "")
+        async Task<List<StockDataPoint>> GetStockData(string ticker, string timeFrame = "")
         {
             if (timeFrame == "")
                 timeFrame = m_dataTimeFrame;
 
             List<GeneralStockData> generalStockData = await IEXDataAccess.GetGeneralData(timeFrame, ticker);
-            List<double> data = new List<double>();
+            List<StockDataPoint> data = new List<StockDataPoint>();
 
             foreach (var entry in generalStockData)
             {
-                if(entry.open > 0.1)
-                    data.Add(entry.open);
+                if (entry.open > 0.1)
+                {
+                    data.Add(new StockDataPoint() { date = entry.date, value = entry.open });
+                }
             }
 
             return data;

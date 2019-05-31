@@ -95,8 +95,6 @@ namespace StockTrader
             if (strategyEntry.TypeName == "BucketStrategy")
                 LoadBucketStrategy((BucketStrategyEntry)strategyEntry);
 
-            // else load the swing strategy
-
             if (strategyEntry.TypeName == "SwingStrategy")
                 LoadSwingStrategy((SwingStrategyEntry)strategyEntry);
 
@@ -196,8 +194,7 @@ namespace StockTrader
             else
                 SwingBuy.Text = "Error, cannot be determined at this time";
         }
-
-
+        
         private void ShowStrategySummaryButton_Click(object sender, RoutedEventArgs e)
         {
             if(SummaryGrid.Visibility == Visibility.Collapsed)
@@ -261,8 +258,7 @@ namespace StockTrader
             else
                 LoadStrategy(strategyList[0]);
         }
-
-
+        
         private async void RunTestButton_Click(object sender, RoutedEventArgs e)
         {
             RunButtonGrid.Visibility = Visibility.Collapsed;
@@ -281,12 +277,12 @@ namespace StockTrader
             // determine which strategy is selected then run back test
             await MainPage.runningBucketStrategies[currentbucketStrategyIndex].BackTest(categoryIndex, tickers, duration);
 
-            RORTextBlock.Text = MainPage.runningBucketStrategies[currentbucketStrategyIndex].m_ROR.ToString();
-            TotalBuysTextBlock.Text = MainPage.runningBucketStrategies[currentbucketStrategyIndex].m_totalBuys.ToString();
+            // RORTextBlock.Text = MainPage.runningBucketStrategies[currentbucketStrategyIndex].m_ROR.ToString();
+            // TotalBuysTextBlock.Text = MainPage.runningBucketStrategies[currentbucketStrategyIndex].m_totalBuys.ToString();
 
+            RORPerformanceChart.DisplayROR(MainPage.runningBucketStrategies[currentbucketStrategyIndex].m_backtestPurchaseRecord);
         }
-
-
+        
 
         private void AddTickerAutoSuggestBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
         {
