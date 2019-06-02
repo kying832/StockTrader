@@ -46,6 +46,9 @@ namespace StockTrader
 
             RunningStrategiesListGrid.Visibility = Visibility.Visible;
             TradingPerformanceGrid.Visibility = Visibility.Collapsed;
+
+            RunningBucketStrategyGrid.Visibility = Visibility.Collapsed;
+            RunningSwingStrategyGrid.Visibility = Visibility.Collapsed;
         }
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
@@ -79,10 +82,20 @@ namespace StockTrader
             }
 
             if (strategyEntry.TypeName == "BucketStrategy")
+            {
+                RunningSwingStrategyGrid.Visibility = Visibility.Collapsed;
+                RunningBucketStrategyGrid.Visibility = Visibility.Visible;
+
                 LoadBucketStrategy((BucketStrategyEntry)strategyEntry);
+            }
 
             if (strategyEntry.TypeName == "SwingStrategy")
+            {
+                RunningBucketStrategyGrid.Visibility = Visibility.Collapsed;
+                RunningSwingStrategyGrid.Visibility = Visibility.Visible;
+
                 LoadSwingStrategy((SwingStrategyEntry)strategyEntry);
+            }
 
             //machine1 and 2
         }
