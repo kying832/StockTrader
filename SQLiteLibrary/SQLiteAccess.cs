@@ -34,20 +34,6 @@ namespace SQLiteAccessLibrary
                     "strategyName VARCHAR(50), " +
                     "ticker VARCHAR(15), " +
                     "CONSTRAINT pk_strategyTicker PRIMARY KEY(strategyName, ticker))");
-                
-                //for swing
-                tables.Add("CREATE TABLE IF NOT EXISTS SwingListStrategy (" +
-                   "strategyName VARCHAR(50) PRIMARY KEY, " +
-                   "daysToAnalyze INT)");
-
-                tables.Add("CREATE TABLE IF NOT EXISTS SwingListStrategyTickers (" +
-                    "strategyName VARCHAR(50), " +
-                    "ticker VARCHAR(15), " +
-                    "CONSTRAINT pk_strategyTicker PRIMARY KEY(strategyName, ticker))");
-
-                tables.Add("CREATE TABLE IF NOT EXISTS LastPageViewed(" +
-                    "rowNumber INT," +
-                    "pageName VARCHAR(8) PRIMARY KEY)"); 
 
                 SqliteCommand createTableCommand;
 
@@ -127,7 +113,7 @@ namespace SQLiteAccessLibrary
         {
             string pageName = "";
 
-            using (SqliteConnection db = new SqliteConnection("Filename=data.db"))
+            using (SqliteConnection db = new SqliteConnection("Filename=lastPageViewed.db"))
             {
                 db.Open();
 
@@ -156,7 +142,7 @@ namespace SQLiteAccessLibrary
          * **********************************************************************************************/
         public static void SetLastViewedPage(string pageName)
         {
-            using (SqliteConnection db = new SqliteConnection("Filename=data.db"))
+            using (SqliteConnection db = new SqliteConnection("Filename=lastPageViewed.db"))
             {
                 db.Open();
 
@@ -259,54 +245,5 @@ namespace SQLiteAccessLibrary
                 db.Close();
             }
         }
-
-        /* **********************************************************************************************
-         * Add a strategy to the swing strategy table
-         * **********************************************************************************************/
-        public static void AddSwingStrategy(string strategyName, List<string> tickers, int daysToAnalyze)
-        {
-            using (SqliteConnection db = new SqliteConnection("Filename=data.db"))
-            {
-                db.Open();
-
-                SqliteCommand insertCommand = new SqliteCommand();
-                insertCommand.Connection = db;
-
-                insertCommand.CommandText = "INSERT INTO SwingListStrategy VALUES (@strategyName, @daysToAnalyze);";
-                insertCommand.Parameters.AddWithValue("@strategyName", strategyName);
-                insertCommand.Parameters.AddWithValue("@daysToAnalyze", daysToAnalyze);
-
-                insertCommand.ExecuteReader();
-
-                db.Close();
-
-            }
-            foreach (var ticker in tickers)
-                AddSwingStrategyTickers(strategyName, ticker);
-
-
-
-        }
-
-
-        private static void AddSwingStrategyTickers(string strategyName, string ticker)
-        {
-            using (SqliteConnection db = new SqliteConnection("Filename=data.db"))
-            {
-                db.Open();
-
-                SqliteCommand insertCommand = new SqliteCommand();
-                insertCommand.Connection = db;
-
-                insertCommand.CommandText = "INSERT INTO SwingListStrategyTickers VALUES (@strategyName, @ticker);";
-                insertCommand.Parameters.AddWithValue("@strategyName", strategyName);
-                insertCommand.Parameters.AddWithValue("@ticker", ticker);
-
-                insertCommand.ExecuteReader();
-
-                db.Close();
-            }
-        }
-
     }
 }
