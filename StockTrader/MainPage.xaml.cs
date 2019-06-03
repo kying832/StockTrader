@@ -19,11 +19,18 @@ namespace StockTrader
 {
     public sealed partial class MainPage : Page
     {
+        // persistent data for active strategies
+        public static List<BucketStrategy> runningBucketStrategies;
+        public static List<SwingStrategy> runningSwingStrategies;
+
         public MainPage()
         {
             this.InitializeComponent();
 
-            // navigate to the last viewed page
+            runningBucketStrategies = new List<BucketStrategy>();
+            runningSwingStrategies = new List<SwingStrategy>();
+
+            // navigate to the last viewed page from the user's previous session
             NavigateToLastViewedPage();
         }
 
@@ -36,6 +43,7 @@ namespace StockTrader
             {
                 PageFrame.Navigate(typeof(CreateStrategyPage));
                 TitleTextBlock.Text = "Create Strategy";
+                SQLiteAccess.SetLastViewedPage("create");
             }
 
             // this is not the first time running the app, so navigate to the last viewed page
