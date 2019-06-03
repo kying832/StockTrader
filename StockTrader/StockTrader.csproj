@@ -120,25 +120,15 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BucketStrategy\AnalysisCategory.cs" />
     <Compile Include="BucketStrategy\BucketStrategy.cs" />
-    <Compile Include="Models\RunningStrategy.cs" />
     <Compile Include="CreateStrategyPage.xaml.cs">
       <DependentUpon>CreateStrategyPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="CustomControls\BucketBarGraphControl.xaml.cs">
-      <DependentUpon>BucketBarGraphControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="CustomControls\PerformanceChart.xaml.cs">
-      <DependentUpon>PerformanceChart.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ML_Model\ML_interface.cs" />
     <Compile Include="Models\AddedStock.cs" />
-    <Compile Include="Models\BucketStrategyEntry.cs" />
-    <Compile Include="Models\SwingStrategyEntry.cs" />
-    <Compile Include="Models\StrategyEntry.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RunStrategyPage.xaml.cs">
       <DependentUpon>RunStrategyPage.xaml</DependentUpon>
@@ -163,7 +153,6 @@
     <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
     <Content Include="Assets\StoreLogo.png" />
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
-    <Content Include="Thoughts.txt" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -171,14 +160,6 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Page Include="CreateStrategyPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="CustomControls\BucketBarGraphControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="CustomControls\PerformanceChart.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -202,12 +183,6 @@
     <PackageReference Include="Microsoft.Data.Sqlite.Core">
       <Version>2.2.4</Version>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite">
-      <Version>2.2.4</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite.Core">
-      <Version>2.2.4</Version>
-    </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.8</Version>
     </PackageReference>
@@ -215,10 +190,13 @@
       <Version>5.1.1</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
-      <Version>12.0.2</Version>
+      <Version>12.0.1</Version>
+    </PackageReference>
+    <PackageReference Include="SQLitePCLRaw.bundle_winsqlite3">
+      <Version>1.1.13</Version>
     </PackageReference>
     <PackageReference Include="Telerik.UI.for.UniversalWindowsPlatform">
-      <Version>1.0.1.5</Version>
+      <Version>1.0.1.4</Version>
     </PackageReference>
     <PackageReference Include="WinRTXamlToolkit.Controls.DataVisualization">
       <Version>2.3.0</Version>
