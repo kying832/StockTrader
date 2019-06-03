@@ -56,9 +56,6 @@ namespace StockTrader
             //swing trading
             SwingaddedStockList = new ObservableCollection<AddedStock>();
 
-            // other initialization features
-            StrategySelectionBucketStrategy.IsSelected = true;
-
         }
 
         private async void CreateStrategyPage_Loaded(object sender, RoutedEventArgs e)
@@ -192,8 +189,6 @@ namespace StockTrader
             }
         }
 
-
-
         private void RunBucketStrategyButton_Click(object sender, RoutedEventArgs e)
         {
             List<string> errorMessages = new List<string>();
@@ -239,15 +234,15 @@ namespace StockTrader
             else // run strategy
             {
                 ErrorMessageTextBlock.Text = "";
-                RunBucketStrategy();
+                RunStrategy();
             }
         }
 
-        private async void RunBucketStrategy()
+
+            private void RunStrategy()
         {
             string strategyName          = BucketStrategyNameTextBox.Text;
             string dataTimeFrame         = (string)((ComboBoxItem)BucketStrategyTimeFrameComboBox.SelectedValue).Content;
-            string slidingWindowSize     = (string)((ComboBoxItem)BucketStrategyWindowSizeComboBox.SelectedValue).Content;
             string futureReturnDate      = (string)((ComboBoxItem)BucketStrategyFutureReturnComboBox.SelectedValue).Content;
             string normalizationFunction = (string)((ComboBoxItem)BucketStrategyNormalizationFunctionComboBox.SelectedValue).Content;
             float.TryParse(BucketStrategySimilarityThresholdTextBox.Text, out float similarityThreshold);
@@ -259,10 +254,7 @@ namespace StockTrader
             // can display a loading page
 
             // can make this multi-threaded
-            ErrorMessageTextBlock.Text = "Running...";
-            MainPage.runningBucketStrategies.Add(new BucketStrategy(strategyName, tickerList, dataTimeFrame, slidingWindowSize, futureReturnDate, normalizationFunction, similarityThreshold));
-            await MainPage.runningBucketStrategies[MainPage.runningBucketStrategies.Count() - 1].Create();
-            ErrorMessageTextBlock.Text = "Finished";
+            MainPage.runningBucketStrategies.Add(new BucketStrategy(strategyName, tickerList, dataTimeFrame, futureReturnDate, normalizationFunction, similarityThreshold));
         }
 
         //swing
@@ -281,9 +273,7 @@ namespace StockTrader
             // Verify that at least one valid ticker has been specified
             if (SwingaddedStockList.Count() <= 0)
                 errorMessages.Add("Error: You must select at least one stock to add to the strategy.");
-            //may change this later but doesnt make logic sense to look at more than 1
-            if (SwingaddedStockList.Count() >= 2)
-                errorMessages.Add("Error: You must add only one stock to the strategy.");
+
 
             // Verify that data to gather has been entered
             if (((ComboBoxItem)DaySelectionForSwing.SelectedValue) == null)
@@ -301,9 +291,12 @@ namespace StockTrader
                 ErrorMessageTextBlockSwing.Text = "";
                 RunStrategySwing();
             }
+
+
+
         }
 
-        private async void RunStrategySwing()
+        private void RunStrategySwing()
         {
             string strategyName = SwingStrategyNameTextBox.Text;
             string daysToAnalyze = (string)((ComboBoxItem)DaySelectionForSwing.SelectedValue).Content;
@@ -311,13 +304,6 @@ namespace StockTrader
             List<string> tickerList = new List<string>();
             foreach (var ticker in SwingaddedStockList)
                 tickerList.Add(ticker.Ticker);
-
-            ErrorMessageTextBlockSwing.Text = "Running...";
-            MainPage.runningSwingStrategies.Add(new SwingStrategy(strategyName, tickerList, daysToAnalyze));
-            await MainPage.runningSwingStrategies[MainPage.runningSwingStrategies.Count() - 1].RunSwing();
-            ErrorMessageTextBlockSwing.Text = "Finished";
-
-
 
         }
 
