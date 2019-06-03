@@ -34,6 +34,7 @@
                     <RowDefinition Height="60" />
                     <RowDefinition Height="60" />
                     <RowDefinition Height="60" />
+                    <RowDefinition Height="60" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
@@ -54,19 +55,25 @@
                 <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="20,10,0,0">
                     <TextBlock Foreground="Black" Text="How much data to gather?" Margin="5,5,75,0" />
                     <ComboBox Name="BucketStrategyTimeFrameComboBox" Width="200">
-                        <ComboBoxItem Name="BucketStrategyTimeFrame1Day" Content="1 Day" />
-                        <ComboBoxItem Name="BucketStrategyTimeFrame3Days" Content="3 Days" />
-                        <ComboBoxItem Name="BucketStrategyTimeFrame5Days" Content="5 Days" />
-                        <ComboBoxItem Name="BucketStrategyTimeFrame10Days" Content="10 Days" />
                         <ComboBoxItem Name="BucketStrategyTimeFrame1Month" Content="1 Month" />
                         <ComboBoxItem Name="BucketStrategyTimeFrame3Months" Content="3 Months" />
                         <ComboBoxItem Name="BucketStrategyTimeFrame6Months" Content="6 Months" />
                         <ComboBoxItem Name="BucketStrategyTimeFrame1Year" Content="1 Year" />
-                        <ComboBoxItem Name="BucketStrategyTimeFrame3Years" Content="3 Years" />
+                        <ComboBoxItem Name="BucketStrategyTimeFrame3Years" Content="2 Years" />
                         <ComboBoxItem Name="BucketStrategyTimeFrame5Years" Content="5 Years" />
                     </ComboBox>
                 </StackPanel>
                 <StackPanel Grid.Row="4" Orientation="Horizontal" Margin="20,10,0,0">
+                    <TextBlock Foreground="Black" Text="Sliding Window Size?" Margin="5,5,110,0" />
+                    <ComboBox Name="BucketStrategyWindowSizeComboBox" Width="200">
+                        <ComboBoxItem Name="WindowSize1Day" Content="1 Day" />
+                        <ComboBoxItem Name="WindowSize3Day" Content="3 Days" />
+                        <ComboBoxItem Name="WindowSize5Day" Content="5 Days" />
+                        <ComboBoxItem Name="WindowSize10Day" Content="10 Days" />
+                        <ComboBoxItem Name="WindowSize1Month" Content="1 Month" />
+                    </ComboBox>
+                </StackPanel>
+                <StackPanel Grid.Row="5" Orientation="Horizontal" Margin="20,10,0,0">
                     <TextBlock Foreground="Black" Text="When to predict future returns?" Margin="5,5,45,0" />
                     <ComboBox Name="BucketStrategyFutureReturnComboBox" Width="200" SelectionChanged="BucketStrategyFutureReturnComboBox_SelectionChanged">
                         <ComboBoxItem Name="BucketStrategyFutureReturn1Day" Content="1 Day" />
@@ -79,19 +86,19 @@
                         <ComboBoxItem Name="BucketStrategyFutureReturn1Year" Content="1 Year" />
                     </ComboBox>
                 </StackPanel>
-                <StackPanel Grid.Row="5" Orientation="Horizontal" Margin="20,10,0,0">
+                <StackPanel Grid.Row="6" Orientation="Horizontal" Margin="20,10,0,0">
                     <TextBlock Foreground="Black" Text="Which normalization function to use?" Margin="5,5,10,0" />
                     <ComboBox Name="BucketStrategyNormalizationFunctionComboBox" Width="200">
                         <ComboBoxItem Name="BucketStrategyNormalizationFunctionDivideByMax" Content="Divide By Max" />
                         <ComboBoxItem Name="BucketStrategyNormalizationFunctionSlopes" Content="Slopes" />
                     </ComboBox>
                 </StackPanel>
-                <StackPanel Grid.Row="6" Orientation="Horizontal" Margin="20,10,0,0">
+                <StackPanel Grid.Row="7" Orientation="Horizontal" Margin="20,10,0,0">
                     <TextBlock Foreground="Black" Text="Similarity Threshold? (0.50 - 1.0)" Margin="5,5,44,0" />
                     <TextBox Name="BucketStrategySimilarityThresholdTextBox" Height="30" Width="200" VerticalAlignment="Top" Margin="0,5,0,0" />
                 </StackPanel>
-                <Button Grid.Row="7" Name="RunBucketStrategyButton" Background="Black" Margin="0,10,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Content="Run Strategy" FontSize="24" Click="RunBucketStrategyButton_Click"/>
-                <TextBlock Name="ErrorMessageTextBlock" Grid.Row="8" Foreground="Black" VerticalAlignment="Top" Margin="20,10,0,0" FontWeight="Bold" />
+                <Button Grid.Row="8" Name="RunBucketStrategyButton" Background="Black" Margin="0,10,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Content="Run Strategy" FontSize="24" Click="RunBucketStrategyButton_Click"/>
+                <TextBlock Grid.Row="9" Name="ErrorMessageTextBlock" Foreground="Black" VerticalAlignment="Top" Margin="20,10,0,0" FontWeight="Bold" />
 
                 <TextBlock Name="AddedStocksLabelTextBlock" Grid.Row="1" Grid.Column="1" Text="Added Stocks:" Margin="100,0,20,0" Foreground="Black" VerticalAlignment="Center" FontWeight="Bold" FontSize="20" />
 
