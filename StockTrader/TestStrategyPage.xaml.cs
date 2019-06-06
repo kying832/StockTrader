@@ -232,7 +232,7 @@ namespace StockTrader
                 {
                     if(MainPage.runningBucketStrategies[iii].m_strategyName == strategyList[index].StrategyName)
                     {
-                        MainPage.runningBucketStrategies.RemoveAt(iii);
+                        MainPage.RemoveBucketStrategyAt(iii);
                         break;
                     }
                 }

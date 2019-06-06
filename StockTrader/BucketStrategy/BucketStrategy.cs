@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using SQLiteAccessLibrary;
 using IEXDataLibrary;
 using Microsoft.Toolkit.Uwp.UI.Controls.TextToolbarSymbols;
+using SQLiteLibrary;
 
 namespace StockTrader
 {
@@ -21,6 +22,7 @@ namespace StockTrader
 
     public class StockDataPoint
     {
+        public string ticker { get; set; }
         public string date { get; set; }
         public double value { get; set; }
     }
@@ -50,31 +52,37 @@ namespace StockTrader
 
         public List<StockPurchaseInfo> m_backtestPurchaseRecord;
 
-
-        public BucketStrategy(string sN, List<string> t, string dTF, string sWS, string fRD, string nF, float sT)
+        public BucketStrategy(string sN, List<string> t, string dTF, string sWS, string fRD, string nF, float sT, bool createAutomatically = false)
         {
-            m_strategyName              = sN;
+            if (createAutomatically || (!SQLiteAccess.BucketStrategyExists(sN)))
+            {
+                m_strategyName = sN;
 
-            m_dataTimeFrame_Readable     = dTF;
-            m_slidingWindowSize_Readable = sWS;
-            m_futureReturnDate_Readable  = fRD;
+                m_dataTimeFrame_Readable = dTF;
+                m_slidingWindowSize_Readable = sWS;
+                m_futureReturnDate_Readable = fRD;
 
-            m_dataTimeFrame             = ProcessDuration(dTF);
-            m_slidingWindowSize         = ProcessDuration(sWS);
-            m_futureReturnDate          = ProcessDuration(fRD);
+                m_dataTimeFrame = ProcessDuration(dTF);
+                m_slidingWindowSize = ProcessDuration(sWS);
+                m_futureReturnDate = ProcessDuration(fRD);
 
-            m_normalizationFunction     = nF;
-            m_similarityThreshold       = sT;
+                m_normalizationFunction = nF;
+                m_similarityThreshold = sT;
 
-            m_tickers = new List<string>();
-            foreach (var ticker in t)
-                m_tickers.Add(ticker);
+                m_tickers = new List<string>();
+                if (t != null)
+                {
+                    foreach (var ticker in t)
+                        m_tickers.Add(ticker);
+                }
 
-            m_categories = new List<AnalysisCategory>();
+                m_categories = new List<AnalysisCategory>();
 
-            m_backtestPurchaseRecord = new List<StockPurchaseInfo>();
+                m_backtestPurchaseRecord = new List<StockPurchaseInfo>();
 
-          //  SQLiteAccess.AddBucketStrategy(m_strategyName, m_tickers, m_dataTimeFrame, m_futureReturnDate, m_normalizationFunction, m_similarityThreshold);
+                if(!createAutomatically)
+                    SQLiteAccess.AddBucketStrategy(m_strategyName, m_dataTimeFrame, m_slidingWindowSize, m_futureReturnDate, m_normalizationFunction, m_similarityThreshold);
+            }
         }
 
         public async Task Create()
@@ -147,6 +155,23 @@ namespace StockTrader
 
                     ++index;
                 }
+
+                // add the data to the database
+                double value = 0.0;
+
+                for (int categoryNumber = 0; categoryNumber < m_categories.Count(); ++categoryNumber)
+                {
+                    for(int entry_index = 0; entry_index < m_categories[categoryNumber].entries.Count(); ++entry_index)
+                    {
+                        for(int data_point_index = 0; data_point_index < m_categories[categoryNumber].entries[entry_index].Count(); ++data_point_index)
+                        {
+                            value = m_categories[categoryNumber].entries[entry_index][data_point_index];
+                            SQLiteAccess.AddBucketStrategyData(m_strategyName, categoryNumber, entry_index, data_point_index, value);
+                        }
+                    }
+                }
+
+
             }
 
             // now redistribute up to the first 5 categories
@@ -256,19 +281,19 @@ namespace StockTrader
             return (data[endOfWindowIndex + futureReturnDate].value - data[endOfWindowIndex].value) / data[endOfWindowIndex].value;
         }
 
-        async Task<List<StockDataPoint>> GetStockData(string ticker, string timeFrame = "")
+        async Task<List<StockDataPoint>> GetStockData(string _ticker, string timeFrame = "")
         {
             if (timeFrame == "")
                 timeFrame = m_dataTimeFrame;
 
-            List<GeneralStockData> generalStockData = await IEXDataAccess.GetGeneralData(timeFrame, ticker);
+            List<GeneralStockData> generalStockData = await IEXDataAccess.GetGeneralData(timeFrame, _ticker);
             List<StockDataPoint> data = new List<StockDataPoint>();
 
             foreach (var entry in generalStockData)
             {
                 if (entry.open > 0.1)
                 {
-                    data.Add(new StockDataPoint() { date = entry.date, value = entry.open });
+                    data.Add(new StockDataPoint() { ticker = _ticker, date = entry.date, value = entry.open });
                 }
             }
 
@@ -292,6 +317,52 @@ namespace StockTrader
         public void ResetBackTestPurchaseRecords()
         {
             m_backtestPurchaseRecord.Clear();
+        }
+
+        public void LoadCategoriesFromDB()
+        {
+            List<_BucketStrategyData> _bSD = SQLiteAccess.GetBucketStrategyData(m_strategyName);
+
+            int currentCategory = 0;
+            int currentEntry = 0;
+            int numberOfEntries = 0;
+
+            List<double> data;
+            AnalysisCategory ac;
+
+            while(true)
+            {
+                IEnumerable<_BucketStrategyData> categoryData = _bSD.Where(p => p.category_index == currentCategory);
+                if (categoryData.Count() == 0)
+                    break;
+
+                ac = new AnalysisCategory();
+
+                currentEntry = 0;
+                while (true)
+                {
+                    IEnumerable<_BucketStrategyData> entryData = categoryData.Where(p => p.entry_index == currentEntry);
+                    if ((numberOfEntries = entryData.Count()) == 0)
+                        break;
+
+                    data = new List<double>();
+                    for (int iii = 0; iii < numberOfEntries; ++iii)
+                        data.Add(0);
+
+                    foreach (var data_point in entryData)
+                        data[data_point.data_point_index] = data_point.value;
+
+                    // add entry to the category
+                    ac.entries.Add(data);
+
+                    ++currentEntry;
+                }
+
+                m_categories.Add(ac);
+
+                ++currentCategory;
+            }
+
         }
 
         // === HELPER FUNCTIONS ===========================================================================

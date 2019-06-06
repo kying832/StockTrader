@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.ApplicationModel.Background;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -15,6 +16,9 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+
+using BackgroundTaskLibrary;
+using System.Threading.Tasks;
 
 namespace StockTrader
 {
@@ -33,6 +37,8 @@ namespace StockTrader
 
         public int m_selectedIndex;
 
+        private ApplicationTrigger _AppTrigger;
+
         public RunStrategyPage()
         {
             this.InitializeComponent();
@@ -49,6 +55,25 @@ namespace StockTrader
 
             RunningBucketStrategyGrid.Visibility = Visibility.Collapsed;
             RunningSwingStrategyGrid.Visibility = Visibility.Collapsed;
+
+
+            _AppTrigger = new ApplicationTrigger();
+
+            // for debugging purposes
+            UnRegisterTasks();
+
+        }
+
+        private void UnRegisterTasks()
+        {
+            var tasks = BackgroundTaskRegistration.AllTasks;
+            foreach (var task in tasks)
+            {
+                // You can check here for the name
+                string name = task.Value.Name;
+
+                task.Value.Unregister(true);
+            }
         }
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
@@ -149,7 +174,7 @@ namespace StockTrader
             }
         }
 
-        private void AddStrategy_Click(object sender, RoutedEventArgs e)
+        private async void AddStrategy_Click(object sender, RoutedEventArgs e)
         {
             // validate the bucket is a valid entry
             int bucket = -1;
@@ -158,13 +183,21 @@ namespace StockTrader
 
             if (bucket < 1 || bucket > MainPage.runningBucketStrategies[m_selectedIndex].m_categories.Count())
                 return;
-
+/*
+            var requestStatus = await BackgroundExecutionManager.RequestAccessAsync();
+            if (requestStatus != BackgroundAccessStatus.AlwaysAllowed)
+            {
+                // Depending on the value of requestStatus, provide an appropriate response
+                // such as notifying the user which functionality won't work as expected
+                return;
+            }
+*/
             // create a list of tickers to trade and populate it
             List<string> tickersToTrade = new List<string>();
             foreach (var entry in stocksToRunStrategyOn)
                 tickersToTrade.Add(entry.ticker);
 
-            runningStrategies.Add(new RunningStrategy()
+            RunningStrategy rs = new RunningStrategy()
             {
                 m_strategyName = StrategyNameTextBlock.Text,
                 m_windowSize = SlidingWindowSizeTextBlock.Text,
@@ -175,8 +208,69 @@ namespace StockTrader
                 m_numberOfTradesMade = 0,
                 m_ROR = 0,
                 m_tickersToTrade = tickersToTrade
-            });
+            };
+
+            if (await AddBucketStrategyToBackground(rs))
+            {
+                runningStrategies.Add(rs);
+            }
         }
+
+        private async Task<bool> AddBucketStrategyToBackground(RunningStrategy rs)
+        {            
+            // check if background task already exists
+            if (BucketStrategyBackgroundExists(rs.m_strategyName))
+                return false;
+
+            // Build the background task
+            var builder = new BackgroundTaskBuilder();
+            builder.Name = rs.m_strategyName;
+            builder.TaskEntryPoint = "BackgroundTaskLibrary.BucketStrategyBackground";
+            builder.SetTrigger(_AppTrigger);
+            builder.AddCondition(new SystemCondition(SystemConditionType.InternetAvailable));
+
+            BackgroundTaskRegistration task = builder.Register();
+
+            // this is primarily for dubugging purposes
+            task.Completed += new BackgroundTaskCompletedEventHandler(OnCompleted);
+
+            var result = await _AppTrigger.RequestAsync();
+
+            return true;
+        }
+
+        private void OnCompleted(IBackgroundTaskRegistration task, BackgroundTaskCompletedEventArgs args)
+        {
+            int iii = 1;
+        }
+
+        private bool BucketStrategyBackgroundExists(string taskName)
+        {
+            foreach (var task in BackgroundTaskRegistration.AllTasks)
+            {
+                if (task.Value.Name == taskName)
+                    return true;
+            }
+
+            
+
+            return false;
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         private void RunningStrategiesListView_ItemClick(object sender, ItemClickEventArgs e)
         {
@@ -185,10 +279,7 @@ namespace StockTrader
             foreach(var tic in ((RunningStrategy)e.ClickedItem).m_tickersToTrade)
                 targetedStocks.Add(new TargetedStockEntry() { ticker = tic.ToUpper() });
         }
-
-
-
-
+                     
         private void AddTickerAutoSuggestBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
         {
             // verify that the reason the text was changed was because the user entered input
