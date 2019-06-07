@@ -1,8 +1,5 @@
-﻿using IEXDataLibrary;
-using StockTrader.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -17,18 +14,21 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
+ master
 using BackgroundTaskLibrary;
 using System.Threading.Tasks;
+=======
+// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
+ master
 
 namespace StockTrader
 {
-    public class TargetedStockEntry
-    {
-        public string ticker { get; set; }
-    }
-
+    /// <summary>
+    /// An empty page that can be used on its own or navigated to within a Frame.
+    /// </summary>
     public sealed partial class RunStrategyPage : Page
     {
+ master
         public ObservableCollection<StrategyEntry> strategyList;
         public ObservableCollection<RunningStrategy> runningStrategies;
         public ObservableCollection<TargetedStockEntry> targetedStocks;
@@ -348,6 +348,11 @@ namespace StockTrader
 
             if (removeAtIndex != -1)
                 stocksToRunStrategyOn.RemoveAt(removeAtIndex);
+
+        public RunStrategyPage()
+        {
+            this.InitializeComponent();
+ master
         }
     }
 }

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using SQLiteAccessLibrary;
 using IEXDataLibrary;
+ master
 using Microsoft.Toolkit.Uwp.UI.Controls.TextToolbarSymbols;
 using SQLiteLibrary;
 
@@ -27,16 +28,21 @@ namespace StockTrader
         public double value { get; set; }
     }
 
+
+
+namespace StockTrader
+{
+master
     public class BucketStrategy
     {
         public string       m_strategyName;
         public List<string> m_tickers;
         public string       m_dataTimeFrame;
-        public string       m_slidingWindowSize;
         public string       m_futureReturnDate;
         public string       m_normalizationFunction;
         public float        m_similarityThreshold;
 
+ master
         // readable representations
         public string m_dataTimeFrame_Readable;
         public string m_slidingWindowSize_Readable;
@@ -69,6 +75,15 @@ namespace StockTrader
                 m_normalizationFunction = nF;
                 m_similarityThreshold = sT;
 
+        public BucketStrategy(string sN, List<string> t, string dTF, string fRD, string nF, float sT)
+        {
+            m_strategyName = sN;
+            m_dataTimeFrame = dTF;
+            m_futureReturnDate = fRD;
+            m_normalizationFunction = nF;
+            m_similarityThreshold = sT;
+ master
+
                 m_tickers = new List<string>();
                 if (t != null)
                 {
@@ -76,6 +91,7 @@ namespace StockTrader
                         m_tickers.Add(ticker);
                 }
 
+ master
                 m_categories = new List<AnalysisCategory>();
 
                 m_backtestPurchaseRecord = new List<StockPurchaseInfo>();
@@ -83,32 +99,18 @@ namespace StockTrader
                 if(!createAutomatically)
                     SQLiteAccess.AddBucketStrategy(m_strategyName, m_dataTimeFrame, m_slidingWindowSize, m_futureReturnDate, m_normalizationFunction, m_similarityThreshold);
             }
+
+            SQLiteAccess.AddBucketStrategy(m_strategyName, m_tickers, m_dataTimeFrame, m_futureReturnDate, m_normalizationFunction, m_similarityThreshold);
+
+            Run();
+ master
         }
 
-        public async Task Create()
+        private void Run()
         {
             // Gather data
-            List<List<StockDataPoint>> allData = new List<List<StockDataPoint>>();
 
-            foreach(string ticker in m_tickers)
-                allData.Add(await GetStockData(ticker));
-
-            // get window size, future return date
-            int windowSize = durationToInt(m_slidingWindowSize);
-            int futureReturnDate = durationToInt(m_futureReturnDate);
-
-            // set the normalization function
-            NormalizationFunction normalize = null;
-            if (m_normalizationFunction == "Divide By Max")
-                normalize = new NormalizationFunction(DivideByMax);
-            else if (m_normalizationFunction == "Slopes")
-                normalize = new NormalizationFunction(Slopes);
-
-            // iterate over each stock and run the analysis loop
-            int index, maxIndex, mostSimilarCategoryIndex;
-            double similarityValue, mostSimilarValue;
-            List<double> windowData = new List<double>();
-
+ master
             foreach(List<StockDataPoint> data in allData)
             {
                 index = 0;
@@ -402,5 +404,9 @@ namespace StockTrader
             }
         }
 
+
+            // 
+        }
+ master
     }
 }

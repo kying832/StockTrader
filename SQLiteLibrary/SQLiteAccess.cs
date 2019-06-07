@@ -32,7 +32,7 @@ namespace SQLiteAccessLibrary
                     "similarityThreshold FLOAT(5,3))");
 
                 tables.Add("CREATE TABLE IF NOT EXISTS BucketListStrategyData (" +
-                    "strategyName VARCHAR(50), " +
+                    "strategyName VARCHAR(50), " + master
 //                    "ticker VARCHAR(15), " +          We can drop this because we don't use it later
                     "category_index INT," +
                     "entry_index INT," +
@@ -53,6 +53,10 @@ namespace SQLiteAccessLibrary
                 tables.Add("CREATE TABLE IF NOT EXISTS LastPageViewed(" +
                     "rowNumber INT," +
                     "pageName VARCHAR(8) PRIMARY KEY)"); 
+
+                    "ticker VARCHAR(15), " +
+                    "CONSTRAINT pk_strategyTicker PRIMARY KEY(strategyName, ticker))");
+ master
 
                 SqliteCommand createTableCommand;
 
@@ -132,7 +136,7 @@ namespace SQLiteAccessLibrary
         {
             string pageName = "";
 
-            using (SqliteConnection db = new SqliteConnection("Filename=data.db"))
+            using (SqliteConnection db = new SqliteConnection("Filename=lastPageViewed.db"))
             {
                 db.Open();
 
@@ -161,7 +165,7 @@ namespace SQLiteAccessLibrary
          * **********************************************************************************************/
         public static void SetLastViewedPage(string pageName)
         {
-            using (SqliteConnection db = new SqliteConnection("Filename=data.db"))
+            using (SqliteConnection db = new SqliteConnection("Filename=lastPageViewed.db"))
             {
                 db.Open();
 
@@ -267,6 +271,7 @@ namespace SQLiteAccessLibrary
                 db.Close();
             }
         }
+ master
 
         public static List<string> GetBucketStrategyNames()
         {
@@ -480,5 +485,7 @@ namespace SQLiteAccessLibrary
 
             return results;
         }
+
+ master
     }
 }

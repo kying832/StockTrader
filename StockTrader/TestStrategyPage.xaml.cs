@@ -7,38 +7,25 @@ using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-using StockTrader.Models;
-using System.Collections.ObjectModel;
-using IEXDataLibrary;
-using SQLiteAccessLibrary;
+// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
 namespace StockTrader
 {
-
+    /// <summary>
+    /// An empty page that can be used on its own or navigated to within a Frame.
+    /// </summary>
     public sealed partial class TestStrategyPage : Page
     {
-        ObservableCollection<StrategyEntry> strategyList;
-        ObservableCollection<AddedStock> addedStockList;
-        List<TickerAutoSuggestionEntry> tickerSuggestions;
-
-        public int currentbucketStrategyIndex;
-        public int currentSwingIndex;
-
         public TestStrategyPage()
         {
             this.InitializeComponent();
+ master
 
             addedStockList = new ObservableCollection<AddedStock>();
             //we need away to differentiat between swing/bucket machine 1 and 2
@@ -378,6 +365,8 @@ namespace StockTrader
         private void TextBlock_SelectionChanged_1(object sender, RoutedEventArgs e)
         {
 
+
+ master
         }
     }
 }
