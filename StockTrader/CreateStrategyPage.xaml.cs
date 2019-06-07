@@ -198,7 +198,7 @@ namespace StockTrader
                 errorMessages.Add("Error: Strategy name must not be left empty.");
             else if(BucketStrategyNameTextBox.Text.Length > 50)
                 errorMessages.Add("Error: Strategy name cannot be more than 50 characters.");
-            else if (SQLiteAccess.StrategyExists(BucketStrategyNameTextBox.Text))
+            else if (SQLiteAccess.BucketStrategyExists(BucketStrategyNameTextBox.Text))
                 errorMessages.Add("Error: Strategy name already exists. Please use a different name.");
 
             // Verify that at least one valid ticker has been specified
@@ -267,7 +267,7 @@ namespace StockTrader
                 errorMessages.Add("Error: Strategy name must not be left empty.");
             else if (SwingStrategyNameTextBox.Text.Length > 50)
                 errorMessages.Add("Error: Strategy name cannot be more than 50 characters.");
-            else if (SQLiteAccess.StrategyExists(SwingStrategyNameTextBox.Text))
+            else if (SQLiteAccess.SwingStrategyExists(SwingStrategyNameTextBox.Text))
                 errorMessages.Add("Error: Strategy name already exists. Please use a different name.");
 
             // Verify that at least one valid ticker has been specified

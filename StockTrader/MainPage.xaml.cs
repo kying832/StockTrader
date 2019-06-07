@@ -14,6 +14,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
 using SQLiteAccessLibrary;
+using SQLiteLibrary;
 
 namespace StockTrader
 {
@@ -30,6 +31,48 @@ namespace StockTrader
 
             // navigate to the last viewed page
             NavigateToLastViewedPage();
+        }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            LoadBucketStrategies();
+        }
+
+        private void LoadBucketStrategies()
+        {
+            // get list of existing strategy names
+            List<string> strategyNames = SQLiteAccess.GetBucketStrategyNames();
+
+            // Load each strategy into the runningStrategies variables
+            _BucketStrategy _bucketStrategy;
+            BucketStrategy bucketStrategy;
+
+            foreach(var name in strategyNames)
+            {
+                _bucketStrategy = SQLiteAccess.GetBucketStrategyGeneralInfo(name);
+                bucketStrategy = new BucketStrategy(
+                    _bucketStrategy.m_strategyName, 
+                    null, 
+                    _bucketStrategy.m_dataTimeFrame,
+                    _bucketStrategy.m_slidingWindowSize, 
+                    _bucketStrategy.m_futureReturnDate, 
+                    _bucketStrategy.m_normalizationFunction,
+                    _bucketStrategy.m_similarityThreshold,
+                    true);
+
+                bucketStrategy.LoadCategoriesFromDB();
+
+                runningBucketStrategies.Add(bucketStrategy);
+            }
+        }
+
+        public static void RemoveBucketStrategyAt(int index)
+        {
+            string strategyName = runningBucketStrategies[index].m_strategyName;
+
+            SQLiteAccess.DeleteBucketStrategy(strategyName);
+
+            runningBucketStrategies.RemoveAt(index);
         }
 
         private void NavigateToLastViewedPage()
@@ -128,5 +171,7 @@ namespace StockTrader
         {
             MenuSplitView.IsPaneOpen = false;
         }
+
+
     }
 }
