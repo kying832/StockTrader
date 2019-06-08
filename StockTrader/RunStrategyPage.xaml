@@ -144,7 +144,7 @@
                             <GridView x:Name="RunningStrategiesListView" Grid.Row="2" ItemsSource="{x:Bind runningStrategies, Mode=OneWay}" IsItemClickEnabled="True" ItemClick="RunningStrategiesListView_ItemClick">
                                 <GridView.ItemTemplate>
                                     <DataTemplate x:DataType="data:RunningStrategy">
-                                        <Grid Width="{Binding ActualWidth, ElementName=ListingHeader}">
+                                        <Grid Width="{Binding ActualWidth, ElementName=ListingHeader, Mode=OneWay}">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="5*" />
                                                 <ColumnDefinition Width="2*" />

@@ -23,6 +23,7 @@ using StockTrader.Models;
 using System.Collections.ObjectModel;
 using IEXDataLibrary;
 using SQLiteAccessLibrary;
+using BucketStrategyLibrary;
 
 namespace StockTrader
 {

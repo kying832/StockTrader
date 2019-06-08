@@ -15,6 +15,7 @@ using Windows.UI.Xaml.Navigation;
 
 using SQLiteAccessLibrary;
 using SQLiteLibrary;
+using BucketStrategyLibrary;
 
 namespace StockTrader
 {
