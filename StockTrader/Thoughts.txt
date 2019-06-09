@@ -1,0 +1,8 @@
+﻿
+Run Strategy Page:
+	1. Page to show running strategies and add new ones
+		a. ListView of currently selected running strategies
+			i. ability to remove a running strategy from the list
+	2. A page to show performance
+		a. Graph the performance
+		b. Show a listview containing the details of the trades made

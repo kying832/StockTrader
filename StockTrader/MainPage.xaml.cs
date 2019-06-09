@@ -14,17 +14,67 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
 using SQLiteAccessLibrary;
+using SQLiteLibrary;
 
 namespace StockTrader
 {
     public sealed partial class MainPage : Page
     {
+        // persistent data for active strategies
+        public static List<BucketStrategy> runningBucketStrategies;
+        public static List<SwingStrategy> runningSwingStrategies;
+
         public MainPage()
         {
             this.InitializeComponent();
 
-            // navigate to the last viewed page
+            runningBucketStrategies = new List<BucketStrategy>();
+            runningSwingStrategies = new List<SwingStrategy>();
+
+            // navigate to the last viewed page from the user's previous session
             NavigateToLastViewedPage();
+        }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            LoadBucketStrategies();
+        }
+
+        private void LoadBucketStrategies()
+        {
+            // get list of existing strategy names
+            List<string> strategyNames = SQLiteAccess.GetBucketStrategyNames();
+
+            // Load each strategy into the runningStrategies variables
+            _BucketStrategy _bucketStrategy;
+            BucketStrategy bucketStrategy;
+
+            foreach(var name in strategyNames)
+            {
+                _bucketStrategy = SQLiteAccess.GetBucketStrategyGeneralInfo(name);
+                bucketStrategy = new BucketStrategy(
+                    _bucketStrategy.m_strategyName, 
+                    null, 
+                    _bucketStrategy.m_dataTimeFrame,
+                    _bucketStrategy.m_slidingWindowSize, 
+                    _bucketStrategy.m_futureReturnDate, 
+                    _bucketStrategy.m_normalizationFunction,
+                    _bucketStrategy.m_similarityThreshold,
+                    true);
+
+                bucketStrategy.LoadCategoriesFromDB();
+
+                runningBucketStrategies.Add(bucketStrategy);
+            }
+        }
+
+        public static void RemoveBucketStrategyAt(int index)
+        {
+            string strategyName = runningBucketStrategies[index].m_strategyName;
+
+            SQLiteAccess.DeleteBucketStrategy(strategyName);
+
+            runningBucketStrategies.RemoveAt(index);
         }
 
         private void NavigateToLastViewedPage()
@@ -36,6 +86,7 @@ namespace StockTrader
             {
                 PageFrame.Navigate(typeof(CreateStrategyPage));
                 TitleTextBlock.Text = "Create Strategy";
+                SQLiteAccess.SetLastViewedPage("create");
             }
 
             // this is not the first time running the app, so navigate to the last viewed page
@@ -123,5 +174,7 @@ namespace StockTrader
         {
             MenuSplitView.IsPaneOpen = false;
         }
+
+
     }
 }

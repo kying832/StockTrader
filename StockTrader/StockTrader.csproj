@@ -18,6 +18,7 @@
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WindowsXamlEnableOverview>true</WindowsXamlEnableOverview>
     <PackageCertificateKeyFile>StockTrader_TemporaryKey.pfx</PackageCertificateKeyFile>
+    <PackageCertificateThumbprint>66BC300BDBB63EFE9A6FBBA4D231B3DF879A7E26</PackageCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -119,16 +120,34 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="BucketStrategy\AnalysisCategory.cs" />
+    <Compile Include="BucketStrategy\BucketStrategy.cs" />
+    <Compile Include="MLPage.xaml.cs">
+      <DependentUpon>MLPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ML_interface.cs" />
+    <Compile Include="Models\RunningStrategy.cs" />
     <Compile Include="CreateStrategyPage.xaml.cs">
       <DependentUpon>CreateStrategyPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CustomControls\BucketBarGraphControl.xaml.cs">
+      <DependentUpon>BucketBarGraphControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CustomControls\PerformanceChart.xaml.cs">
+      <DependentUpon>PerformanceChart.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Models\AddedStock.cs" />
+    <Compile Include="Models\BucketStrategyEntry.cs" />
+    <Compile Include="Models\SwingStrategyEntry.cs" />
+    <Compile Include="Models\StrategyEntry.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RunStrategyPage.xaml.cs">
       <DependentUpon>RunStrategyPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="SwingStrategy\SwingStrat.cs" />
     <Compile Include="TestStrategyPage.xaml.cs">
       <DependentUpon>TestStrategyPage.xaml</DependentUpon>
     </Compile>
@@ -148,6 +167,7 @@
     <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
     <Content Include="Assets\StoreLogo.png" />
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
+    <Content Include="Thoughts.txt" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -158,7 +178,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="CustomControls\BucketBarGraphControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CustomControls\PerformanceChart.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="MLPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -178,6 +210,12 @@
     <PackageReference Include="Microsoft.Data.Sqlite.Core">
       <Version>2.2.4</Version>
     </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite">
+      <Version>2.2.4</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite.Core">
+      <Version>2.2.4</Version>
+    </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.8</Version>
     </PackageReference>
@@ -185,13 +223,10 @@
       <Version>5.1.1</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
-      <Version>12.0.1</Version>
-    </PackageReference>
-    <PackageReference Include="SQLitePCLRaw.bundle_winsqlite3">
-      <Version>1.1.13</Version>
+      <Version>12.0.2</Version>
     </PackageReference>
     <PackageReference Include="Telerik.UI.for.UniversalWindowsPlatform">
-      <Version>1.0.1.4</Version>
+      <Version>1.0.1.5</Version>
     </PackageReference>
     <PackageReference Include="WinRTXamlToolkit.Controls.DataVisualization">
       <Version>2.3.0</Version>
@@ -201,6 +236,10 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\BackgroundTasks\BackgroundTaskLibrary.csproj">
+      <Project>{a84c1082-7b3c-49af-b49d-142f0a146906}</Project>
+      <Name>BackgroundTaskLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\IEXDataLibrary\IEXDataLibrary.csproj">
       <Project>{0b16b78e-deca-4aa6-8ee6-50c4b47385dc}</Project>
       <Name>IEXDataLibrary</Name>
@@ -210,6 +249,7 @@
       <Name>SQLiteLibrary</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

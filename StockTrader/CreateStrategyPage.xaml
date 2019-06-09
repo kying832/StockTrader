@@ -5,10 +5,204 @@
     xmlns:local="using:StockTrader"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:data="using:StockTrader.Models"
     mc:Ignorable="d"
+    Loaded="CreateStrategyPage_Loaded"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid>
-        <TextBlock Margin="100" HorizontalAlignment="Center" FontSize="24" Text="This is the Create Strategy page." />
+    <Grid Background="White">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        
+        <ComboBox Name="StrategySelectionComboBox" PlaceholderText="Select Strategy" Margin="50,50,0,0" Width="200" SelectionChanged="StrategySelectionComboBox_SelectionChanged">
+            <ComboBoxItem Name="StrategySelectionBucketStrategy" Content="Bucket Strategy" />
+            <ComboBoxItem Name="StrategySelectionMLStrategy1" Content="Machine Learning Prediction" />
+            <ComboBoxItem Name="StrategySwingTradingStrategy" Content="Swing Trading Strategy" />
+        </ComboBox>
+
+        <Grid Grid.Row="1">
+            <Grid Name="BucketStrategyGrid" Visibility="Visible">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="46" />
+                    <RowDefinition Height="60" />
+                    <RowDefinition Height="60" />
+                    <RowDefinition Height="60" />
+                    <RowDefinition Height="60" />
+                    <RowDefinition Height="60" />
+                    <RowDefinition Height="60" />
+                    <RowDefinition Height="60" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.ColumnSpan="3" FontSize="36" FontWeight="Bold" Margin="20,10,0,10" Text="Bucket Strategy Design Parameters" Foreground="Black"/>
+                <StackPanel Grid.Row="1" Orientation="Horizontal">
+                    <TextBlock Text="Name This Strategy:" Foreground="Black" Margin="25,10,117,0"/>
+                    <TextBox Name="BucketStrategyNameTextBox" Height="30" Width="200" Margin="0,5,0,0" VerticalAlignment="Top"/>
+                </StackPanel>
+                <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="20,15,0,0">
+                    <TextBlock Foreground="Black" Text="Add Ticker:" Margin="5,5,156,0" />
+                    <AutoSuggestBox Name="AddTickerAutoSuggestBox" Height="30" Width="200" Margin="15,0,0,0" VerticalAlignment="Top" TextChanged="AddTickerAutoSuggestBox_TextChanged"  QueryIcon="Find" SuggestionChosen="AddTickerAutoSuggestBox_SuggestionChosen"  AutoMaximizeSuggestionArea="True" UpdateTextOnSelect="False" QuerySubmitted="AddTickerAutoSuggestBox_QuerySubmitted" />
+                </StackPanel>
+                <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="20,10,0,0">
+                    <TextBlock Foreground="Black" Text="How much data to gather?" Margin="5,5,75,0" />
+                    <ComboBox Name="BucketStrategyTimeFrameComboBox" Width="200">
+                        <ComboBoxItem Name="BucketStrategyTimeFrame1Month" Content="1 Month" />
+                        <ComboBoxItem Name="BucketStrategyTimeFrame3Months" Content="3 Months" />
+                        <ComboBoxItem Name="BucketStrategyTimeFrame6Months" Content="6 Months" />
+                        <ComboBoxItem Name="BucketStrategyTimeFrame1Year" Content="1 Year" />
+                        <ComboBoxItem Name="BucketStrategyTimeFrame3Years" Content="2 Years" />
+                        <ComboBoxItem Name="BucketStrategyTimeFrame5Years" Content="5 Years" />
+                    </ComboBox>
+                </StackPanel>
+                <StackPanel Grid.Row="4" Orientation="Horizontal" Margin="20,10,0,0">
+                    <TextBlock Foreground="Black" Text="Sliding Window Size?" Margin="5,5,110,0" />
+                    <ComboBox Name="BucketStrategyWindowSizeComboBox" Width="200">
+                        <ComboBoxItem Name="WindowSize1Day" Content="1 Day" />
+                        <ComboBoxItem Name="WindowSize3Day" Content="3 Days" />
+                        <ComboBoxItem Name="WindowSize5Day" Content="5 Days" />
+                        <ComboBoxItem Name="WindowSize10Day" Content="10 Days" />
+                        <ComboBoxItem Name="WindowSize1Month" Content="1 Month" />
+                    </ComboBox>
+                </StackPanel>
+                <StackPanel Grid.Row="5" Orientation="Horizontal" Margin="20,10,0,0">
+                    <TextBlock Foreground="Black" Text="When to predict future returns?" Margin="5,5,45,0" />
+                    <ComboBox Name="BucketStrategyFutureReturnComboBox" Width="200" SelectionChanged="BucketStrategyFutureReturnComboBox_SelectionChanged">
+                        <ComboBoxItem Name="BucketStrategyFutureReturn1Day" Content="1 Day" />
+                        <ComboBoxItem Name="BucketStrategyFutureReturn3Days" Content="3 Days" />
+                        <ComboBoxItem Name="BucketStrategyFutureReturn5Days" Content="5 Days" />
+                        <ComboBoxItem Name="BucketStrategyFutureReturn10Days" Content="10 Days" />
+                        <ComboBoxItem Name="BucketStrategyFutureReturn1Month" Content="1 Month" />
+                        <ComboBoxItem Name="BucketStrategyFutureReturn3Months" Content="3 Months" />
+                        <ComboBoxItem Name="BucketStrategyFutureReturn6Months" Content="6 Months" />
+                        <ComboBoxItem Name="BucketStrategyFutureReturn1Year" Content="1 Year" />
+                    </ComboBox>
+                </StackPanel>
+                <StackPanel Grid.Row="6" Orientation="Horizontal" Margin="20,10,0,0">
+                    <TextBlock Foreground="Black" Text="Which normalization function to use?" Margin="5,5,10,0" />
+                    <ComboBox Name="BucketStrategyNormalizationFunctionComboBox" Width="200">
+                        <ComboBoxItem Name="BucketStrategyNormalizationFunctionDivideByMax" Content="Divide By Max" />
+                        <ComboBoxItem Name="BucketStrategyNormalizationFunctionSlopes" Content="Slopes" />
+                    </ComboBox>
+                </StackPanel>
+                <StackPanel Grid.Row="7" Orientation="Horizontal" Margin="20,10,0,0">
+                    <TextBlock Foreground="Black" Text="Similarity Threshold? (0.50 - 1.0)" Margin="5,5,44,0" />
+                    <TextBox Name="BucketStrategySimilarityThresholdTextBox" Height="30" Width="200" VerticalAlignment="Top" Margin="0,5,0,0" />
+                </StackPanel>
+                <Button Grid.Row="8" Name="RunBucketStrategyButton" Background="Black" Margin="0,10,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Content="Run Strategy" FontSize="24" Click="RunBucketStrategyButton_Click"/>
+                <TextBlock Grid.Row="9" Name="ErrorMessageTextBlock" Foreground="Black" VerticalAlignment="Top" Margin="20,10,0,0" FontWeight="Bold" />
+
+                <TextBlock Name="AddedStocksLabelTextBlock" Grid.Row="1" Grid.Column="1" Text="Added Stocks:" Margin="100,0,20,0" Foreground="Black" VerticalAlignment="Center" FontWeight="Bold" FontSize="20" />
+
+                <ListView Visibility="Visible" Grid.Column="1" Grid.Row="2" Grid.RowSpan="6" x:Name="AddedStocksListView" ItemsSource="{x:Bind addedStockList, Mode=OneWay}" IsItemClickEnabled="False">
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="data:AddedStock">
+                            <Grid Width="{Binding ElementName=WatchListGrid, Path=ActualWidth, Mode=OneWay}" Height="30">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="200" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Text="{x:Bind Ticker, Mode=OneWay}" FontSize="18" HorizontalAlignment="Stretch" TextAlignment="Center" Foreground="#2a2a2b" VerticalAlignment="Center" Margin="100,0,50,0"/>
+                                <Button Name="AddedStockListButton" Grid.Column="1" Background="Black" Foreground="White" FontFamily="Segoe MDL2 Assets" Content="&#xE711;"  VerticalAlignment="Center" HorizontalAlignment="Right" Padding="0" Click="AddedStockListRemoveButton_Click"/>
+
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </Grid>
+
+            <Grid Name="MachineLearningStrategy1Grid" Visibility="Collapsed">
+                <TextBlock FontSize="36" FontWeight="Bold" Margin="50,10,0,10" Text="Machine Learning Strategy #1 Design Parameters" Foreground="Black"/>
+                <TextBlock HorizontalAlignment="Left" Text="Get Prediction from Trained Model" TextWrapping="Wrap" VerticalAlignment="Top" Margin="226,66,0,0" Height="83" Width="668" FontSize="36"/>
+                <TextBox x:Name="Result_display" HorizontalAlignment="Left" Text="Result" VerticalAlignment="Top" Margin="324,362,0,0" Height="48" Width="177"/>
+                <TextBox x:Name="Input_ticker" HorizontalAlignment="Left" Text="Type Ticker Here" VerticalAlignment="Top" Margin="306,238,0,0" Height="56" Width="275" FontSize="22"/>
+                <Button x:Name="submit_button" Content="Submit" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="630,250,0,0" Click="submit_button_Click" />
+            </Grid>
+
+            
+
+            <Grid Name="SwingStradingStrategyGrid" Visibility="Collapsed">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="46" />
+                    <RowDefinition Height="60" />
+                    <RowDefinition Height="60" />
+                    <RowDefinition Height="60" />
+                    <RowDefinition Height="60" />
+                    <RowDefinition Height="60" />
+                    <RowDefinition Height="60" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.ColumnSpan="3" FontSize="36" FontWeight="Bold" Margin="20,10,0,10" Text="Swing Strategy Design Parameters" Foreground="Black"/>
+                <TextBlock Grid.ColumnSpan="3" FontSize="18" FontWeight="Bold" Margin="30,50,0,10" Text="The Swing Strategy of Trading aims to capture gains over a period of several days to several weeks." Foreground="Black"/>
+
+                <StackPanel Grid.Row="1" Orientation="Horizontal">
+                    <TextBlock Text="Name This Strategy:" Foreground="Black" Margin="25,10,150,0" Width="200"/>
+                    <TextBox Name="SwingStrategyNameTextBox" Height="30" Width="200" Margin="0,5,0,0" VerticalAlignment="Top"/>
+                </StackPanel>
+
+                <StackPanel Grid.Row="2" Orientation="Horizontal">
+                    <TextBlock Foreground="Black" Text="Add Ticker:" Margin="25,10,150,0" Width="200"/>
+                    <AutoSuggestBox Name="AddTickerAutoSuggestBoxSwing" Height="30" Width="200" Margin="0,5,0,0" VerticalAlignment="Top" TextChanged="AddTickerAutoSuggestBox_TextChanged"  QueryIcon="Find" SuggestionChosen="AddTickerAutoSuggestBox_SuggestionChosen"  AutoMaximizeSuggestionArea="True" UpdateTextOnSelect="False" QuerySubmitted="AddTickerAutoSuggestBox_QuerySubmitted" />
+                </StackPanel>
+
+                <StackPanel Grid.Row="3" Orientation="Horizontal">
+                    <TextBlock Text="How many days to evaluate:" Foreground="Black" Margin="25,10,150,0" SelectionChanged="TextBlock_SelectionChanged" Width="200"/>
+                    <ComboBox x:Name="DaySelectionForSwing" Margin="0,5,0,0" Width="200" SelectionChanged="DaySelectionForSwingComboBox_SelectionChanged" Height="35">
+                        <ComboBoxItem x:Name="SwingStrategy10Day" Content="10 Days" />
+                        <ComboBoxItem x:Name="SwingStrategy15Day" Content="15 Days" />
+                        <ComboBoxItem x:Name="SwingStrategy20Day" Content="20 Days" />
+                        <ComboBoxItem x:Name="SwingStrategy25Day" Content="25 Days" />
+                        <ComboBoxItem x:Name="SwingStrategy30Day" Content="30 Days" />
+                        <ComboBoxItem x:Name="SwingStrategy35Day" Content="35 Days" />
+                        <ComboBoxItem x:Name="SwingStrategy40Day" Content="40 Days" />
+                    </ComboBox>
+                </StackPanel>
+
+                <Button Grid.Row="5" Name="RunSwingStrategyButton" Background="Black" Margin="0,10,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Content="Run Strategy" FontSize="24" Click="RunSwingStrategyButton_Click"/>
+
+                <TextBlock Name="AddedStocksLabelTextBlockSwing" Grid.Row="3" Grid.Column="1" Text="Added Stocks:" Margin="100,0,20,0" Foreground="Black" VerticalAlignment="Center" FontWeight="Bold" FontSize="20" />
+
+                <ListView Visibility="Visible" Grid.Column="1" Grid.Row="4" Grid.RowSpan="6" x:Name="AddedStocksListViewSwing" ItemsSource="{x:Bind SwingaddedStockList, Mode=OneWay}" IsItemClickEnabled="False">
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="data:AddedStock">
+                            <Grid Width="{Binding ElementName=WatchListGrid, Path=ActualWidth, Mode=OneWay}" Height="30">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="200" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Text="{x:Bind Ticker, Mode=OneWay}" FontSize="18" HorizontalAlignment="Stretch" TextAlignment="Center" Foreground="#2a2a2b" VerticalAlignment="Center" Margin="100,0,50,0"/>
+                                <Button Name="AddedStockListButtonSwing" Grid.Column="1" Background="Black" Foreground="White" FontFamily="Segoe MDL2 Assets" Content="&#xE711;"  VerticalAlignment="Center" HorizontalAlignment="Right" Padding="0" Click="SwingAddedStockListRemoveButton_Click"/>
+
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+                
+                <TextBlock Name="ErrorMessageTextBlockSwing" Grid.Row="6" Foreground="Black" VerticalAlignment="Top" Margin="20,10,0,0" FontWeight="Bold" />
+                
+ 
+
+
+
+
+
+            </Grid>
+        </Grid>
     </Grid>
 </Page>
