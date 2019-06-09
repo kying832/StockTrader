@@ -79,8 +79,8 @@ namespace IEXDataLibrary
             return (List<ThreeMonthData>)serializer.ReadObject(ms);
         }
     }
-
-
+   
+    
     [DataContract]
     public class GeneralStockData
     {

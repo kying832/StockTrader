@@ -18,16 +18,17 @@ namespace StockTrader.ML_Model
         {
             
             //get data from IEX interface
-            var data = IEXDataLibrary.IEXDataAccess.GetGeneralData(ticker, "6m");
-
-
-
-
+            List<GeneralStockData> data = await IEXDataLibrary.IEXDataAccess.GetGeneralData( "6m", ticker);
+            //what happens if there's a bad ticker name?
+            //TODO - handle case of bad ticker
+            //TODO - have more convienient typing into the UI
             //convert data into JSON and prepare for HTTP POST
             var json_data = JsonConvert.SerializeObject(data);
             var http = new HttpClient();
             //for now, the URL will be to localhost.  will determine at later date if Google Cloud Services will host the model API
-            String url = "http://localhost:5000";
+            //String url = "http://localhost:5000/predict";
+            //this url will point to Google Cloud Services kubernetes cluster handling the Flask API
+            String url = "http://104.155.163.66/predict";
             var response = await http.PostAsync(url, new StringContent(json_data, Encoding.UTF8, "application/json"));
             //we'll let the Python handle the json data.  parsing it would require creating a new object, so it seems the manipulations are easier done in python
             //parse response for prediction, and return that
@@ -40,7 +41,7 @@ namespace StockTrader.ML_Model
         
         public class response_type
         {
-
+            
             public bool success { get; set; }
             public int prediction { get; set; }
         }

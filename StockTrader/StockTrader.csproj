@@ -122,6 +122,10 @@
     </Compile>
     <Compile Include="BucketStrategy\AnalysisCategory.cs" />
     <Compile Include="BucketStrategy\BucketStrategy.cs" />
+    <Compile Include="MLPage.xaml.cs">
+      <DependentUpon>MLPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ML_interface.cs" />
     <Compile Include="Models\RunningStrategy.cs" />
     <Compile Include="CreateStrategyPage.xaml.cs">
       <DependentUpon>CreateStrategyPage.xaml</DependentUpon>
@@ -183,6 +187,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="MainPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="MLPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
