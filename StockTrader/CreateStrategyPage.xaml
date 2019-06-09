@@ -120,15 +120,19 @@
             </Grid>
 
             <Grid Name="MachineLearningStrategy1Grid" Visibility="Collapsed">
-                <TextBlock FontSize="36" FontWeight="Bold" Margin="50,10,0,10" Text="Machine Learning Strategy #1 Design Parameters" Foreground="Black"/>
+                <TextBlock FontSize="36" FontWeight="Bold" Margin="50,10,0,10" Text="Machine Learning Prediction" Foreground="Black"/>
                 <TextBlock HorizontalAlignment="Left" Text="Get Prediction from Trained Model" TextWrapping="Wrap" VerticalAlignment="Top" Margin="226,66,0,0" Height="83" Width="668" FontSize="36"/>
-                <TextBox x:Name="Result_display" HorizontalAlignment="Left" Text="Result" VerticalAlignment="Top" Margin="324,362,0,0" Height="48" Width="177"/>
-                <TextBox x:Name="Input_ticker" HorizontalAlignment="Left" Text="Type Ticker Here" VerticalAlignment="Top" Margin="306,238,0,0" Height="56" Width="275" FontSize="22"/>
-                <Button x:Name="submit_button" Content="Submit" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="630,250,0,0" Click="submit_button_Click" />
+                <Border Margin="8" BorderThickness="1" BorderBrush="Black" Width="185" Height="65">
+                <TextBlock x:Name="Result_display"   Foreground="Black" Text="Results"
+                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+                <AutoSuggestBox x:Name="Input_ticker" HorizontalAlignment="Left" Text="Type Ticker Here" VerticalAlignment="Top" Margin="306,238,0,0" Height="35" Width="275" FontSize="22"
+                         GotFocus="Input_ticker_GotFocus" TextChanged="AddTickerAutoSuggestBox_TextChanged" SuggestionChosen="AddTickerAutoSuggestBox_SuggestionChosen"/>
+                <Button x:Name="submit_button" Content="Submit" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="630,238,0,0" Click="submit_button_Click" />
             </Grid>
 
             
-
+ 
             <Grid Name="SwingStradingStrategyGrid" Visibility="Collapsed">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />

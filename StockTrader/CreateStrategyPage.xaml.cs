@@ -177,6 +177,7 @@ namespace StockTrader
             }
 
 
+
             //swing
             if (!string.IsNullOrEmpty(AddTickerAutoSuggestBoxSwing.Text)&& (StrategySwingTradingStrategy.IsSelected))
             {
@@ -321,8 +322,9 @@ namespace StockTrader
 
         }
         /*
-            this function will provide 
+            this function will provide the user interface to get predictions
              */
+
         private async void submit_button_Click(object sender, RoutedEventArgs e)
         {
             //get text from input box
@@ -354,6 +356,17 @@ namespace StockTrader
         
 
         private void BucketStrategyFutureReturnComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+
+        private void Input_ticker_GotFocus(object sender, RoutedEventArgs e)
+        {
+            Input_ticker.Text = string.Empty;
+            Input_ticker.GotFocus -= Input_ticker_GotFocus;
+        }
+
+        private void Input_ticker_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
         {
 
         }

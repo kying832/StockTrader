@@ -20,7 +20,11 @@ namespace StockTrader.ML_Model
             //get data from IEX interface
             List<GeneralStockData> data = await IEXDataLibrary.IEXDataAccess.GetGeneralData( "6m", ticker);
             //what happens if there's a bad ticker name?
-            //TODO - handle case of bad ticker
+            //TODO - handle case of bad ticker, should return empty list.
+            if (data.Count < 1)
+            {
+                return -1;
+            }
             //TODO - have more convienient typing into the UI
             //convert data into JSON and prepare for HTTP POST
             var json_data = JsonConvert.SerializeObject(data);

@@ -43,6 +43,10 @@ namespace StockTrader
                 //print buy signal
                 Result_display.Text = "Buy/Hold";
             }
+            else if (result == -1)
+            {
+                Result_display.Text = "Invalid Ticker";
+            }
         }
 
         private void back_button_Click(object sender, RoutedEventArgs e)
