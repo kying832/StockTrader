@@ -19,6 +19,9 @@ using Windows.UI.Xaml.Navigation;
 
 using BackgroundTaskLibrary;
 using System.Threading.Tasks;
+using SQLiteAccessLibrary;
+using BucketStrategyLibrary;
+using SQLiteLibrary;
 
 namespace StockTrader
 {
@@ -79,6 +82,26 @@ namespace StockTrader
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
             tickerSuggestions = await TickerAutoSuggestionEntryManager.GetTickerAutoSuggestionEntriesList();
+
+            List<_RunningStrategy> rs = SQLiteAccess.GetAllRunningBucketStrategies();
+
+            foreach (var entry in rs)
+            {
+                runningStrategies.Add(new RunningStrategy()
+                {
+                    m_strategyName = entry.m_strategyName,
+                    m_bucketInUse = entry.m_bucketNumber,
+                    m_startDate = entry.m_startDate,
+                    m_numberOfTradesMade = SQLiteAccess.NumberOfTrades(entry.m_strategyName),
+                    m_ROR = SQLiteAccess.ComputeROR(entry.m_strategyName),
+                    m_tickersToTrade = SQLiteAccess.GetTickersToTrade(entry.m_strategyName),
+                    m_windowSize = entry.m_windowSize,
+                    m_futureReturnDate = entry.m_futureReturnDate,
+                    m_similarityThreshold = entry.m_similarityThreshold,
+                    m_dataTimeFrame = entry.m_dataTimeFrame,
+                    m_normalizationFunction = entry.m_normalizationFunction
+                });
+            }
         }
 
         private void InitializeStrategyList()
@@ -197,11 +220,15 @@ namespace StockTrader
             foreach (var entry in stocksToRunStrategyOn)
                 tickersToTrade.Add(entry.ticker);
 
+            List<BucketStrategy> lbs = MainPage.runningBucketStrategies.Where(p => p.m_strategyName == StrategyNameTextBlock.Text).ToList();
+            
             RunningStrategy rs = new RunningStrategy()
             {
                 m_strategyName = StrategyNameTextBlock.Text,
+                m_dataTimeFrame = lbs[0].m_dataTimeFrame,
                 m_windowSize = SlidingWindowSizeTextBlock.Text,
                 m_futureReturnDate = FutureReturnDateTextBlock.Text,
+                m_normalizationFunction = lbs[0].m_normalizationFunction,
                 m_similarityThreshold = SimilarityThresholdTextBlock.Text,
                 m_bucketInUse = int.Parse(BucketToUseTextBox.Text),
                 m_startDate = DateTime.Today.Month.ToString() + "/" + DateTime.Today.Day.ToString() + "/" + DateTime.Today.Year.ToString(),
@@ -236,6 +263,19 @@ namespace StockTrader
 
             var result = await _AppTrigger.RequestAsync();
 
+            SQLiteAccess.AddRunningBucketStrategy(
+                rs.m_tickersToTrade,
+                rs.m_strategyName, 
+                rs.m_dataTimeFrame,
+                rs.m_windowSize,
+                rs.m_futureReturnDate,
+                rs.m_normalizationFunction,
+                rs.m_similarityThreshold,
+                rs.m_bucketInUse,
+                rs.m_startDate);
+
+
+
             return true;
         }
 
@@ -257,21 +297,7 @@ namespace StockTrader
             return false;
         }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        
         private void RunningStrategiesListView_ItemClick(object sender, ItemClickEventArgs e)
         {
             targetedStocks.Clear();

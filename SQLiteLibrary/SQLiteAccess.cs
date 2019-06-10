@@ -39,7 +39,30 @@ namespace SQLiteAccessLibrary
                     "data_point_index INT," +
                     "value DOUBLE," +
                     "CONSTRAINT pk_strategyTicker PRIMARY KEY(strategyName, category_index, entry_index, data_point_index))");
-                
+                               
+                tables.Add("CREATE TABLE IF NOT EXISTS RunningBucketStrategies (" +
+                    "strategyName VARCHAR(50)," +
+                    "dataTimeFrame VARCHAR(15)," +
+                    "windowSize VARCHAR(15)," +
+                    "futureReturnDate VARCHAR(15)," +
+                    "normalizationFunction VARCHAR(15)," +
+                    "similarityThreshold VARCHAR(15)," + 
+                    "bucketNumber INT," +
+                    "startDate VARCHAR(15))");
+
+                tables.Add("CREATE TABLE IF NOT EXISTS RunningBucketStrategyTickers (" +
+                    "strategyName VARCHAR(50)," +
+                    "ticker VARCHAR(15)," + 
+                    "daysToHold INT)");
+
+                tables.Add("CREATE TABLE IF NOT EXISTS RunningBucketStrategyTrades (" +
+                    "strategyName VARCHAR(50), " +
+                    "ticker VARCHAR(15)," +
+                    "buyDate VARCHAR(15)," +
+                    "sellDate VARCHAR(15)," +
+                    "buyValue DOUBLE," +
+                    "sellValue DOUBLE)");
+
                 //for swing
                 tables.Add("CREATE TABLE IF NOT EXISTS SwingListStrategy (" +
                    "strategyName VARCHAR(50) PRIMARY KEY, " +
@@ -384,6 +407,339 @@ namespace SQLiteAccessLibrary
             }
 
             return results;
+        }
+
+        // --- Running Bucket Strategies
+        public static int NumberOfTrades(string strategyName)
+        {
+            int numberOfTrades = 0;
+
+            return numberOfTrades;
+
+
+
+
+
+
+
+        }
+
+        public static double ComputeROR(string strategyName)
+        {
+            double ROR = 0;
+
+            return ROR;
+
+
+
+
+
+
+
+        }
+
+        public static List<_RunningStrategy> GetAllRunningBucketStrategies()
+        {
+            List<_RunningStrategy> strategies = new List<_RunningStrategy>();
+
+            using (SqliteConnection db = new SqliteConnection("Filename=data.db"))
+            {
+                db.Open();
+
+                // create the select all command
+                SqliteCommand selectCommand = new SqliteCommand("SELECT * FROM RunningBucketStrategies", db);                
+
+                SqliteDataReader query = selectCommand.ExecuteReader();
+
+                while (query.Read())
+                {
+                    strategies.Add(new _RunningStrategy()
+                    {
+                        m_strategyName = query.GetString(0),
+                        m_dataTimeFrame = query.GetString(1),
+                        m_windowSize = query.GetString(2),
+                        m_futureReturnDate = query.GetString(3),
+                        m_normalizationFunction = query.GetString(4),
+                        m_similarityThreshold = query.GetString(5),
+                        m_bucketNumber = query.GetInt32(6),
+                        m_startDate = query.GetString(7)
+                    });
+                }
+
+                db.Close();
+            }
+
+            return strategies;
+        }
+
+        private static int GetDaysToHold(string futureReturnDate)
+        {
+            switch (futureReturnDate)
+            {
+                case "1d": return 1;
+                case "1 Day": return 1;
+                case "3d": return 3;
+                case "3 Days": return 3;
+                case "5d": return 5;
+                case "5 Days": return 5;
+                case "10d": return 10;
+                case "10 Days": return 10;
+                case "1m": return 21;
+                case "1 Month": return 21;
+                case "3m": return 63;
+                case "3 Months": return 63;
+                case "6m": return 126;
+                case "6 Months": return 126;
+                case "1y": return 252;
+                case "1 Year": return 252;
+                default: return 0;
+            }
+        }
+
+        public static void AddRunningBucketStrategyTicker(string strategyName, string ticker, string futureReturnDate)
+        {
+            int daysToHold = GetDaysToHold(futureReturnDate);
+
+            using (SqliteConnection db = new SqliteConnection("Filename=data.db"))
+            {
+                db.Open();
+
+                SqliteCommand insertCommand = new SqliteCommand();
+                insertCommand.Connection = db;
+
+                // Use parameterized query to prevent SQL injection attacks
+                insertCommand.CommandText = "INSERT INTO RunningBucketStrategyTickers VALUES (@strategyName, @ticker, @daysToHold);";
+                insertCommand.Parameters.AddWithValue("@strategyName", strategyName);
+                insertCommand.Parameters.AddWithValue("@ticker", ticker);
+                insertCommand.Parameters.AddWithValue("@daysToHold", daysToHold);
+
+                insertCommand.ExecuteReader();
+
+                db.Close();
+            }
+        }
+
+        public static void AddRunningBucketStrategy(List<string> tickers, string strategyName, string dataTimeFrame, string windowSize, string futureReturnDate, string normalizationFunction, string similarityThreshold, int bucketNumber, string startDate)
+        {
+            foreach (var ticker in tickers)
+                AddRunningBucketStrategyTicker(strategyName, ticker, futureReturnDate);
+
+            using (SqliteConnection db = new SqliteConnection("Filename=data.db"))
+            {
+                db.Open();
+
+                SqliteCommand insertCommand = new SqliteCommand();
+                insertCommand.Connection = db;
+
+                // Use parameterized query to prevent SQL injection attacks
+                insertCommand.CommandText = "INSERT INTO RunningBucketStrategies VALUES (@strategyName, @dataTimeFrame, @windowSize, @futureReturnDate, @normalizationFunction, @similarityThreshold, @bucketNumber, @startDate);";
+                insertCommand.Parameters.AddWithValue("@strategyName", strategyName);
+                insertCommand.Parameters.AddWithValue("@dataTimeFrame", dataTimeFrame);
+                insertCommand.Parameters.AddWithValue("@windowSize", windowSize);
+                insertCommand.Parameters.AddWithValue("@futureReturnDate", futureReturnDate);
+                insertCommand.Parameters.AddWithValue("@normalizationFunction", normalizationFunction);
+                insertCommand.Parameters.AddWithValue("@similarityThreshold", similarityThreshold);
+                insertCommand.Parameters.AddWithValue("@bucketNumber", bucketNumber);
+                insertCommand.Parameters.AddWithValue("@startDate", startDate);
+
+                insertCommand.ExecuteReader();
+
+                db.Close();
+            }
+        }
+
+        public static _RunningStrategy GetRunningBucketStrategy(string strategyName)
+        {
+            _RunningStrategy rs = new _RunningStrategy();
+
+            using (SqliteConnection db = new SqliteConnection("Filename=data.db"))
+            {
+                db.Open();
+
+                // create the select all command
+                SqliteCommand selectCommand = new SqliteCommand("SELECT * FROM RunningBucketStrategies WHERE strategyName = @strategyName", db);
+                selectCommand.Parameters.AddWithValue("@strategyName", strategyName);
+
+                SqliteDataReader query = selectCommand.ExecuteReader();
+
+                if (query.HasRows)
+                {
+                    query.Read();
+                    rs.m_strategyName = query.GetString(0);
+                    rs.m_dataTimeFrame = query.GetString(1);
+                    rs.m_windowSize = query.GetString(2);
+                    rs.m_futureReturnDate = query.GetString(3);
+                    rs.m_normalizationFunction = query.GetString(4);
+                    rs.m_similarityThreshold = query.GetString(5);
+                    rs.m_bucketNumber = query.GetInt32(6);
+                    rs.m_startDate = query.GetString(7);
+                }
+
+                db.Close();
+            }
+
+            return rs;
+        }
+
+        public static List<string> GetTickersToTrade(string strategyName)
+        {
+            List<string> tickers = new List<string>();
+
+            using (SqliteConnection db = new SqliteConnection("Filename=data.db"))
+            {
+                db.Open();
+
+                // create the select all command
+                SqliteCommand selectCommand = new SqliteCommand("SELECT * FROM RunningBucketStrategyTickers WHERE strategyName = @strategyName", db);
+                selectCommand.Parameters.AddWithValue("@strategyName", strategyName);
+
+                SqliteDataReader query = selectCommand.ExecuteReader();
+
+                while(query.Read())
+                {
+                    tickers.Add(query.GetString(1));
+                }
+
+                db.Close();
+            }
+
+            return tickers;
+        }
+
+        public static bool StrategyStillExists(string strategyName)
+        {
+            bool retVal = false;
+
+            using (SqliteConnection db = new SqliteConnection("Filename=data.db"))
+            {
+                db.Open();
+
+                // create the select all command
+                SqliteCommand selectCommand = new SqliteCommand("SELECT * FROM RunningBucketStrategies WHERE strategyName = @strategyName", db);
+                selectCommand.Parameters.AddWithValue("@strategyName", strategyName);
+
+                SqliteDataReader query = selectCommand.ExecuteReader();
+
+                if (query.HasRows)
+                    retVal = true;
+
+                db.Close();
+            }
+
+            return retVal;
+        }
+
+        public static bool TickerIsInBuyState(string strategyName, string ticker)
+        {
+            bool retVal = false;
+
+            using (SqliteConnection db = new SqliteConnection("Filename=data.db"))
+            {
+                db.Open();
+
+                // create the select all command
+                SqliteCommand selectCommand = new SqliteCommand("SELECT * FROM RunningBucketStrategyTrades WHERE strategyName = @strategyName AND ticker = @ticker AND sellDate = @sellDate", db);
+                selectCommand.Parameters.AddWithValue("@strategyName", strategyName);
+                selectCommand.Parameters.AddWithValue("@ticker", ticker);
+                selectCommand.Parameters.AddWithValue("@sellDate", "-1");
+
+                SqliteDataReader query = selectCommand.ExecuteReader();
+
+                if (query.HasRows)
+                    retVal = true;
+
+                db.Close();
+            }
+
+            return retVal;
+        }
+
+        public static int GetCurrentDaysToHold(string strategyName, string ticker)
+        {
+            int daysToHold = 0;
+
+            using (SqliteConnection db = new SqliteConnection("Filename=data.db"))
+            {
+                db.Open();
+
+                // create the select all command
+                SqliteCommand selectCommand = new SqliteCommand("SELECT daysToHold FROM RunningBucketStrategyTickers WHERE strategyName = @strategyName AND ticker = @ticker", db);
+                selectCommand.Parameters.AddWithValue("@strategyName", strategyName);
+                selectCommand.Parameters.AddWithValue("@ticker", ticker);
+
+                SqliteDataReader query = selectCommand.ExecuteReader();
+
+                if (query.Read())
+                {
+                    daysToHold = query.GetInt32(0);
+                }
+
+                db.Close();
+            }
+
+            return daysToHold;
+        }
+
+        public static int DecrimentDaysToHold(string strategyName, string ticker)
+        {
+            int daysToHold = GetCurrentDaysToHold(strategyName, ticker) - 1;
+
+            using (SqliteConnection db = new SqliteConnection("Filename=data.db"))
+            {
+                db.Open();
+
+                // create the select all command
+                SqliteCommand selectCommand = new SqliteCommand("UPDATE RunningBucketStrategyTickers SET daysToHold = @daysToHold WHERE strategyName = @strategyName AND ticker = @ticker", db);
+                selectCommand.Parameters.AddWithValue("@strategyName", strategyName);
+                selectCommand.Parameters.AddWithValue("@ticker", ticker);
+                selectCommand.Parameters.AddWithValue("@daysToHold", daysToHold);
+
+                SqliteDataReader query = selectCommand.ExecuteReader();
+
+                db.Close();
+            }
+
+            return daysToHold;
+        }
+
+        public static void MakeBuy(string strategyName, string ticker, string buyDate, double buyValue)
+        {
+            using (SqliteConnection db = new SqliteConnection("Filename=data.db"))
+            {
+                db.Open();
+
+                // create the select all command
+                SqliteCommand selectCommand = new SqliteCommand("INSERT INTO RunningBucketStrategyTrades VALUES (@strategyName, @ticker, @buyDate, @sellDate, @buyValue, @sellValue);", db);
+                selectCommand.Parameters.AddWithValue("@strategyName", strategyName);
+                selectCommand.Parameters.AddWithValue("@ticker", ticker);
+                selectCommand.Parameters.AddWithValue("@buyDate", buyDate);
+                selectCommand.Parameters.AddWithValue("@sellDate", "-1");
+                selectCommand.Parameters.AddWithValue("@buyValue", buyValue);
+                selectCommand.Parameters.AddWithValue("@sellValue", 0.0);
+
+                SqliteDataReader query = selectCommand.ExecuteReader();
+
+                db.Close();
+            }
+        }
+
+        public static void MakeSell(string strategyName, string ticker, string sellDate, double sellValue)
+        {
+            using (SqliteConnection db = new SqliteConnection("Filename=data.db"))
+            {
+                db.Open();
+
+                // create the select all command
+                SqliteCommand selectCommand = new SqliteCommand("UPDATE RunningBucketStrategyTrades SET sellDate = @sellDate, sellValue = @sellValue WHERE strategyName = @strategyName AND ticker = @ticker", db);
+                selectCommand.Parameters.AddWithValue("@strategyName", strategyName);
+                selectCommand.Parameters.AddWithValue("@ticker", ticker);
+                selectCommand.Parameters.AddWithValue("@sellDate", sellDate);
+                selectCommand.Parameters.AddWithValue("@sellValue", sellValue);
+
+                SqliteDataReader query = selectCommand.ExecuteReader();
+
+                db.Close();
+            }
         }
 
 

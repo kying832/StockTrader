@@ -129,6 +129,20 @@
       <Version>6.2.3</Version>
     </PackageReference>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BucketStrategy\BucketStrategyLibrary.csproj">
+      <Project>{6b08ae62-793d-4017-b8b2-8ca085a99afc}</Project>
+      <Name>BucketStrategyLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\IEXDataLibrary\IEXDataLibrary.csproj">
+      <Project>{0b16b78e-deca-4aa6-8ee6-50c4b47385dc}</Project>
+      <Name>IEXDataLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SQLiteLibrary\SQLiteLibrary.csproj">
+      <Project>{85e29cc8-dc48-4c75-87a3-44208a6fd8f4}</Project>
+      <Name>SQLiteLibrary</Name>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

@@ -17,5 +17,7 @@ namespace StockTrader.Models
         public string       m_windowSize { get; set; }
         public string       m_futureReturnDate { get; set; }
         public string       m_similarityThreshold { get; set; } 
+        public string       m_dataTimeFrame { get; set; }
+        public string       m_normalizationFunction { get; set; }
     }
 }

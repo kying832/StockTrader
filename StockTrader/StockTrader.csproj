@@ -240,6 +240,10 @@
       <Project>{a84c1082-7b3c-49af-b49d-142f0a146906}</Project>
       <Name>BackgroundTaskLibrary</Name>
     </ProjectReference>
+    <ProjectReference Include="..\BucketStrategy\BucketStrategyLibrary.csproj">
+      <Project>{6b08ae62-793d-4017-b8b2-8ca085a99afc}</Project>
+      <Name>BucketStrategyLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\IEXDataLibrary\IEXDataLibrary.csproj">
       <Project>{0b16b78e-deca-4aa6-8ee6-50c4b47385dc}</Project>
       <Name>IEXDataLibrary</Name>

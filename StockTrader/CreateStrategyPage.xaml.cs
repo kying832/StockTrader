@@ -17,6 +17,7 @@ using StockTrader.Models;
 using System.Collections.ObjectModel;
 using IEXDataLibrary;
 using SQLiteAccessLibrary;
+using BucketStrategyLibrary;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
